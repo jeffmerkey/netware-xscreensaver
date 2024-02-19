@@ -728,7 +728,7 @@ static void *netwaresmp_init(Display *dpy, Window window)
     st->wormsize = get_integer_resource(st->dpy, "wormsize", "Integer");
     st->ncolors = 16;
     st->dbuf = get_boolean_resource(st->dpy, "doubleBuffer", "Boolean");
-    st->mono = get_boolean_resource (st->dpy, "mono", "Integer");
+    st->mono = get_boolean_resource (st->dpy, "mono", "Boolean");
 
 #ifdef HAVE_COCO
     st->dbuf = False;
@@ -753,9 +753,9 @@ static void *netwaresmp_init(Display *dpy, Window window)
 
     if (st->wormsize < 10 || st->wormsize > 80)
     {
-       fprintf(stderr, "%s: specified wormsize (%d) must be between 10 and 80, defaulting to 20\n", 
+       fprintf(stderr, "%s: specified wormsize (%d) must be between 10 and 80, defaulting to 30\n", 
 	       progname, st->wormsize);
-       st->HEIGHT = 20;
+       st->HEIGHT = 30;
        st->WIDTH = st->HEIGHT / 2;
     }
     else
@@ -933,6 +933,7 @@ static XrmOptionDescRec netwaresmp_options [] = {
         { "-bg", ".background", XrmoptionSepArg, 0},
         { "-delay",     ".delay", XrmoptionSepArg, 0 },
         { "-wormsize", ".wormsize", XrmoptionSepArg, 0 },
+        { "-mono",        ".mono", XrmoptionNoArg, "True" },
         { "-db",        ".doubleBuffer", XrmoptionNoArg, "True" },
         { "-no-db",     ".doubleBuffer", XrmoptionNoArg, "False" },
         { 0, 0, 0, 0 }

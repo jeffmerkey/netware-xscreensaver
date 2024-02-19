@@ -1,6 +1,6 @@
 diff -Naur xscreensaver-6.08/driver/XScreenSaver.ad.in xscreensaver-6.08-new/driver/XScreenSaver.ad.in
 --- xscreensaver-6.08/driver/XScreenSaver.ad.in	2023-10-10 17:24:06.551773885 -0700
-+++ xscreensaver-6.08-new/driver/XScreenSaver.ad.in	2024-02-16 23:53:12.460899361 -0800
++++ xscreensaver-6.08-new/driver/XScreenSaver.ad.in	2024-02-18 19:51:37.910620897 -0800
 @@ -413,6 +413,7 @@
  				wander --root				    \n\
  				xflame --root				    \n\
@@ -19,7 +19,7 @@ diff -Naur xscreensaver-6.08/driver/XScreenSaver.ad.in xscreensaver-6.08-new/dri
  *hacks.photopile.name:      Photo Pile
 diff -Naur xscreensaver-6.08/hacks/config/netwaresmp.xml xscreensaver-6.08-new/hacks/config/netwaresmp.xml
 --- xscreensaver-6.08/hacks/config/netwaresmp.xml	1969-12-31 16:00:00.000000000 -0800
-+++ xscreensaver-6.08-new/hacks/config/netwaresmp.xml	2024-02-17 19:16:00.879699152 -0800
++++ xscreensaver-6.08-new/hacks/config/netwaresmp.xml	2024-02-18 19:52:01.732928608 -0800
 @@ -0,0 +1,38 @@
 +<?xml version="1.0" encoding="ISO-8859-1"?>
 +
@@ -44,7 +44,7 @@ diff -Naur xscreensaver-6.08/hacks/config/netwaresmp.xml xscreensaver-6.08-new/h
 +  <number id="wormsize" type="spinbutton" arg="--wormsize %"
 +          _label="Wormsize" low="10" high="80" default="30"/>
 +
-+  <command id="mono" _label="Mono Color Mode" arg-set="--mono"/>
++  <boolean id="mono" _label="Mono Color Mode" arg-set="--mono"/>
 +
 +  <string id="fg" _label="Foreground color" arg="--fg %" default="#FF0000"/>
 +  <string id="bg" _label="Background color" arg="--bg %" default="#000000"/>
@@ -61,7 +61,7 @@ diff -Naur xscreensaver-6.08/hacks/config/netwaresmp.xml xscreensaver-6.08-new/h
 +</screensaver>
 diff -Naur xscreensaver-6.08/hacks/Makefile.in xscreensaver-6.08-new/hacks/Makefile.in
 --- xscreensaver-6.08/hacks/Makefile.in	2023-10-10 17:37:05.846255309 -0700
-+++ xscreensaver-6.08-new/hacks/Makefile.in	2024-02-17 19:47:33.777779718 -0800
++++ xscreensaver-6.08-new/hacks/Makefile.in	2024-02-18 19:51:37.911620910 -0800
 @@ -111,7 +111,7 @@
  		  demon.c loop.c t3d.c penetrate.c deluxe.c compass.c \
  		  squiral.c xflame.c wander.c spotlight.c critical.c \
@@ -110,8 +110,8 @@ diff -Naur xscreensaver-6.08/hacks/Makefile.in xscreensaver-6.08-new/hacks/Makef
  
 diff -Naur xscreensaver-6.08/hacks/netwaresmp.c xscreensaver-6.08-new/hacks/netwaresmp.c
 --- xscreensaver-6.08/hacks/netwaresmp.c	1969-12-31 16:00:00.000000000 -0800
-+++ xscreensaver-6.08-new/hacks/netwaresmp.c	2024-02-17 19:16:54.964387056 -0800
-@@ -0,0 +1,941 @@
++++ xscreensaver-6.08-new/hacks/netwaresmp.c	2024-02-18 19:51:51.195792502 -0800
+@@ -0,0 +1,942 @@
 +/***************************************************************************
 +*
 +*   Copyright(c) Jeff V. Merkey 1997-2024.  All rights reserved.
@@ -842,7 +842,7 @@ diff -Naur xscreensaver-6.08/hacks/netwaresmp.c xscreensaver-6.08-new/hacks/netw
 +    st->wormsize = get_integer_resource(st->dpy, "wormsize", "Integer");
 +    st->ncolors = 16;
 +    st->dbuf = get_boolean_resource(st->dpy, "doubleBuffer", "Boolean");
-+    st->mono = get_boolean_resource (st->dpy, "mono", "Integer");
++    st->mono = get_boolean_resource (st->dpy, "mono", "Boolean");
 +
 +#ifdef HAVE_COCO
 +    st->dbuf = False;
@@ -867,9 +867,9 @@ diff -Naur xscreensaver-6.08/hacks/netwaresmp.c xscreensaver-6.08-new/hacks/netw
 +
 +    if (st->wormsize < 10 || st->wormsize > 80)
 +    {
-+       fprintf(stderr, "%s: specified wormsize (%d) must be between 10 and 80, defaulting to 20\n", 
++       fprintf(stderr, "%s: specified wormsize (%d) must be between 10 and 80, defaulting to 30\n", 
 +	       progname, st->wormsize);
-+       st->HEIGHT = 20;
++       st->HEIGHT = 30;
 +       st->WIDTH = st->HEIGHT / 2;
 +    }
 +    else
@@ -1047,6 +1047,7 @@ diff -Naur xscreensaver-6.08/hacks/netwaresmp.c xscreensaver-6.08-new/hacks/netw
 +        { "-bg", ".background", XrmoptionSepArg, 0},
 +        { "-delay",     ".delay", XrmoptionSepArg, 0 },
 +        { "-wormsize", ".wormsize", XrmoptionSepArg, 0 },
++        { "-mono",        ".mono", XrmoptionNoArg, "True" },
 +        { "-db",        ".doubleBuffer", XrmoptionNoArg, "True" },
 +        { "-no-db",     ".doubleBuffer", XrmoptionNoArg, "False" },
 +        { 0, 0, 0, 0 }
@@ -1055,7 +1056,7 @@ diff -Naur xscreensaver-6.08/hacks/netwaresmp.c xscreensaver-6.08-new/hacks/netw
 +XSCREENSAVER_MODULE ("NetwareSMP", netwaresmp)
 diff -Naur xscreensaver-6.08/hacks/netwaresmp.man xscreensaver-6.08-new/hacks/netwaresmp.man
 --- xscreensaver-6.08/hacks/netwaresmp.man	1969-12-31 16:00:00.000000000 -0800
-+++ xscreensaver-6.08-new/hacks/netwaresmp.man	2024-02-17 16:53:01.902682050 -0800
++++ xscreensaver-6.08-new/hacks/netwaresmp.man	2024-02-18 19:51:37.911620910 -0800
 @@ -0,0 +1,79 @@
 +.TH XScreenSaver 1 "27-Apr-97" "X Version 11"
 +.SH NAME
@@ -1138,8 +1139,8 @@ diff -Naur xscreensaver-6.08/hacks/netwaresmp.man xscreensaver-6.08-new/hacks/ne
 +1994.  
 diff -Naur xscreensaver-6.08/xscreensaver.spec xscreensaver-6.08-new/xscreensaver.spec
 --- xscreensaver-6.08/xscreensaver.spec	2023-10-10 17:24:04.989688938 -0700
-+++ xscreensaver-6.08-new/xscreensaver.spec	2024-02-15 14:52:35.439491179 -0800
-@@ -1,5 +1,8 @@
++++ xscreensaver-6.08-new/xscreensaver.spec	2024-02-18 19:59:53.903027570 -0800
+@@ -1,10 +1,13 @@
  %define	name xscreensaver
  %define	version 6.08
 +# override the default configure macro to remove --disable-dependency-tracking
@@ -1148,6 +1149,12 @@ diff -Naur xscreensaver-6.08/xscreensaver.spec xscreensaver-6.08-new/xscreensave
  
  Summary:	X screen saver and locker
  Name:		%{name}
+ Version:	%{version}
+-Release:	1
++Release:	2
+ Epoch:		1
+ License:	BSD
+ Group:		Amusements/Graphics
 @@ -28,7 +31,7 @@
  BuildRequires:	xorg-x11-proto-devel
  BuildRequires:	mesa-libGL-devel

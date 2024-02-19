@@ -21,7 +21,7 @@
   <number id="wormsize" type="spinbutton" arg="--wormsize %"
           _label="Wormsize" low="10" high="80" default="30"/>
 
-  <command id="mono" _label="Mono Color Mode" arg-set="--mono"/>
+  <boolean id="mono" _label="Mono Color Mode" arg-set="--mono"/>
 
   <string id="fg" _label="Foreground color" arg="--fg %" default="#FF0000"/>
   <string id="bg" _label="Background color" arg="--bg %" default="#000000"/>
