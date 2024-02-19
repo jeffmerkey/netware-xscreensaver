@@ -5,7 +5,7 @@
 *   Portions adapted from xscreensaver loadsnake program is
 *   portions Copyright (c) 2007-2011 Cosimo Streppone <cosimo@cpan.org>
 *
-*   Licensed under the MIT License
+*   Licensed under the MIT/X License
 *
 *   Permission is hereby granted, free of charge, to any person obtaining a copy
 *   of this software and associated documentation files (the "Software"), to 
