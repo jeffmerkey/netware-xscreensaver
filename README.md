@@ -67,7 +67,7 @@ rpm -i xscreensaver-netwaresmp-6.08-3.src.rpm
 *(Note: rpm installs the source code files in /root/rpmbuild/ as top directory for RedHat and CentOS
 platforms.  SuSe platforms install the source code files in /usr/src/packages/)*
 
-For building or rebuilding RPMS or DEB Packages after you have installed the associated source packages on your platform, refer to the following:
+For building or rebuilding RPMS Packages after you have installed the associated source packages on your platform, refer to the following:
 
 - [Building the Screensaver as an RPM Package (Redhat/CentOS/SuSe)](#building-as-an-rpm-package)
 
