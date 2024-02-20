@@ -31,7 +31,7 @@ For example, the release v6.08-3 contains the following packages in the release 
 Most of the XScreensaver packages shipped or distributed by RedHat, Debian, and many Distros of Linux are quite old
 and outdated and do not contain current bug fixes or support and should be upgraded in any event.  
 
-To remove a previously installed or outdated version of XScreensavere with the rpm package manager for x86_64:
+To remove a previously installed or outdated version of XScreensaver with the rpm package manager for x86_64:
 ```sh
 rpm -e xscreensaver
 ```
