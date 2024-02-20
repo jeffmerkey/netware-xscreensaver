@@ -5,8 +5,9 @@
 - [Quick Start Guide](#quick-start-guide)
 - [Building the Screensaver from Source](#building-the-screensaver-from-source)
 - [Building the Screensaver as an RPM Package (Redhat/CentOS/SuSe)](#building-as-an-rpm-package)
-- [Netwaresmp Options](#netwaresmp-options)
+- [NetwareSMP Options](#netwaresmp-options)
 - [Copyright](#copyright)
+- [Authors](#authors)
 - [Issues / Problems / Help](#issues--problems--help)
 
 ## Description
@@ -152,6 +153,7 @@ To build the Screensaver using the rpm tool, change directories (cd) into the /r
 
 ```sh
 rpmbuild -ba xscreensaver-6.8.spec <enter>
+```
 
 ## **Copyright**
 
