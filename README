@@ -3,6 +3,19 @@
 NOVELL NETWARE SMP CONSOLE SCREENSAVER FOR X11, GNOME, AND KDE DESKTOPS
 
 
+Table of Contents 
+
+-   Description
+-   Quick Start Guide
+-   Building the Screensaver from Source
+-   Building the Screensaver as an RPM Package (Redhat/CentOS/SuSe)
+-   Netwaresmp Options
+-   Environment
+-   Copyright
+-   Authors
+-   Issues / Problems / Help
+
+
 Description
 
 The _netwaresmp_ screensaver written by Jeffrey Merkey
@@ -58,7 +71,7 @@ Debian, and many Distros of Linux are quite old and outdated and do not
 contain current bug fixes or support and should be upgraded in any
 event.
 
-To remove a previously installed or outdated version of XScreensavere
+To remove a previously installed or outdated version of XScreensaver
 with the rpm package manager for x86_64:
 
     rpm -e xscreensaver
@@ -89,7 +102,7 @@ the associated source packages on your platform, refer to the following:
 -   Building the Screensaver as an RPM Package (Redhat/CentOS/SuSe)
 
 
-netwaresmp Options
+_NETWARESMP_ OPTIONS
 
     netwaresmp [-cpus  number of cpus] [-speedup  divisor] [-wormsize  pixels] 
     [-display host:display.screen] [-foreground color] [-background color] 
@@ -98,7 +111,7 @@ netwaresmp Options
     [-cycle-delay]
 
 
-Command Line Options
+COMMAND LINE OPTIONS
 
 _netwaresmp_ accepts the following options:
 
@@ -144,7 +157,7 @@ _netwaresmp_ accepts the following options:
     or 1 second.
 
 
-Environment
+ENVIRONMENT
 
 -   DISPLAY
     to get the default host and display number.
@@ -153,27 +166,10 @@ Environment
     resources stored in the RESOURCE_MANAGER property.
 
 
-Copyright
-
-Copyright © 1994-2024 by Jamie Zawinski, Jeffrey Merkey, Cosimo
-Streppone, and others. Permission to use, copy, modify, distribute, and
-sell this software and its documentation for any purpose is hereby
-granted without fee, provided that the above copyright notice appear in
-all copies and that both that copyright notice and this permission
-notice appear in supporting documentation. No representations are made
-about the suitability of this software for any purpose. It is provided
-“as is” without express or implied warranty.
+BUILDING THE SCREENSAVER FROM SOURCE
 
 
-Authors
-
-Jeffrey Merkey <jeffmerkey@gmail.com> and Cosimo Streppone
-<cosimo@cpan.org>, based on PopSquares, Deco hacks, loadsnake, and
-Novell’s Netware SMP. The original Netware SMP screensaver was written
-by Jeffrey Merkey at Novell in 1994.
-
-
-Building as an RPM Package
+BUILDING AS AN RPM PACKAGE
 
 In order to build the screensaver as an RPM, the program must be
 compressed into a tar.gz file and the tar.gz file named to match the
@@ -204,3 +200,26 @@ into the /root/rpmbuild/SPECS/ directory (/usr/src/packages/SPECS/ for
 SuSe) and enter the following command:
 
     rpmbuild -ba xscreensaver-6.8.spec <enter>
+
+    ## **Copyright**
+
+    Copyright © 1994-2024 by Jamie Zawinski, Jeffrey Merkey, Cosimo Streppone, 
+    and others.  Permission to use, copy, modify, distribute, and sell this software
+    and its documentation for any purpose is hereby granted without fee, provided 
+    that the above copyright notice appear in all copies and that both that 
+    copyright notice and this permission notice appear in supporting documentation. No representations are made about the suitability of this software for any 
+    purpose.  It is provided "as is" without express or implied warranty.
+
+    ## **Authors**
+
+    Jeffrey Merkey &lt;[jeffmerkey@gmail.com](mailto:jeffmerkey@gmail.com)&gt; and Cosimo Streppone &lt;cosimo@cpan.org&gt;, 
+    based on PopSquares, Deco hacks, loadsnake, and Novell's Netware SMP.  The 
+    original Netware SMP screensaver was written by Jeffrey Merkey at Novell in
+    1994.  
+
+    ## **Issues / problems / help**
+
+    If you have any issues, please log them at <https://github.com/jeffmerkey/netware-screensaver-linux/issues>
+
+    If you have any suggestions for improvements then pull requests are
+    welcomed, or raise an issue.
