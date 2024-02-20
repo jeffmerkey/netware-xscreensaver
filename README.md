@@ -6,9 +6,7 @@
 - [Building the Screensaver from Source](#building-the-screensaver-from-source)
 - [Building the Screensaver as an RPM Package (Redhat/CentOS/SuSe)](#building-as-an-rpm-package)
 - [Netwaresmp Options](#netwaresmp-options)
-- [Environment](#environment)  
 - [Copyright](#copyright)
-- [Authors](#authors)
 - [Issues / Problems / Help](#issues--problems--help)
 
 ## Description
