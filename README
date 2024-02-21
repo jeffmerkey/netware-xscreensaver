@@ -176,8 +176,8 @@ integrate the netwaresmp screensaver into the xscreensaver-settings
 configuration tool. The build for xscreensaver-settings setup utility
 uses a static file to list integrated screensavers and this file is only
 updated by running autoreconf against the code base. Second, this
-approach allows the netwaresmp patch series to previous versions of
-xscreensaver package prior to the 6.08 release.
+approach allows the netwaresmp patch series to be applied to previous
+versions of xscreensaver package prior to the 6.08 release.
 
 Most Linux distributions use an outdated xscreensaver program which
 lacks current bug fixes and new capabilities. It should be noted that
