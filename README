@@ -187,7 +187,7 @@ these earlier distributions, however, in most cases the existing
 netwaresmp patch series should work on most of them. If you have
 problems trying to apply the patch series to an xscreensaver release,
 please feel free to post an Issue to Issues and I will look into it and
-get back to you and provide an updated patch for that xsceensaver
+get back to you and provide an updated patch for that xscreensaver
 distribution. It’s actually a lot better if you just choose to upgrade
 to the xscreensaver 6.08 release since there have been many bug fixes
 and enhanced features in the newer code base. It’s also a lot less
@@ -449,4 +449,4 @@ If you have any issues, please log them at
 https://github.com/jeffmerkey/netware-xscreensaver/issues
 
 If you have any suggestions for improvements then pull requests are
-welcomed, or raise an issue. ```
+welcomed, or raise an issue.
