@@ -46,7 +46,7 @@ To remove a previously installed or outdated version of XScreensaver with the rp
 rpm -e xscreensaver
 ```
 
-To remove a previously installed or outdated version of XScreensaver and all package depedencies with the dnf or yum package 
+To remove a previously installed or outdated version of XScreensaver and all package dependencies with the dnf or yum package 
 manager for Linux:
 ```sh
 dnf remove xscreensaver

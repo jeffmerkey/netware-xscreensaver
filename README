@@ -76,7 +76,7 @@ with the rpm package manager for x86_64:
     rpm -e xscreensaver
 
 To remove a previously installed or outdated version of XScreensaver and
-all package depedencies with the dnf or yum package manager for Linux:
+all package dependencies with the dnf or yum package manager for Linux:
 
     dnf remove xscreensaver
 
