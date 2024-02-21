@@ -264,7 +264,7 @@ autoreconf: configure.ac: not using Automake
 autoreconf: Leaving directory `.'
 [root@localhost xscreensaver-6.08-netwaresmp]# 
 ```
-Configure and then type 'make' to build the  xscreensaver-netwaresmp-6.08 package.  If the make process succeeds, then perform 'make install' to install the xscreensaver package to your system:
+Now type 'configure' and then type 'make' to build the  xscreensaver-netwaresmp-6.08 package.  If the make process succeeds, then perform 'make install' to install the xscreensaver package to your system:
 
 ```sh
 [root@localhost xscreensaver-6.08-netwaresmp]# ./configure; 
