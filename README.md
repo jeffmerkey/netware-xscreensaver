@@ -46,6 +46,12 @@ To remove a previously installed or outdated version of XScreensaver with the rp
 rpm -e xscreensaver
 ```
 
+To remove a previously installed or outdated version of XScreensaver and all package depedencies with the dnf or yum package 
+manager for Linux:
+```sh
+dnf remove xscreensaver
+```
+
 ### **Installing Binary Packages**
 
 To install the binary package with the rpm package manager for x86_64:
@@ -173,7 +179,7 @@ original Netware SMP screensaver was written by Jeffrey Merkey at Novell in
 
 ## **Issues / problems / help**
 
-If you have any issues, please log them at <https://github.com/jeffmerkey/netware-screensaver-linux/issues>
+If you have any issues, please log them at <https://github.com/jeffmerkey/netware-xscreensaver/issues>
 
 If you have any suggestions for improvements then pull requests are
 welcomed, or raise an issue.
