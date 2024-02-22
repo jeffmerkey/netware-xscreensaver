@@ -82,7 +82,7 @@ For building or rebuilding RPMS Packages after you have installed the associated
 ```
 netwaresmp [-cpus  number of cpus] [-speedup  divisor] [-wormsize  pixels] 
 [-display host:display.screen] [-foreground color] [-background color] 
-[-window] [-root] [-mono] [-install] [-visual visual]
+[-window] [-root] [-mono] [-circles] [-install] [-visual visual]
 ```
 
 ## **Command Line Options**
