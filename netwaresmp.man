@@ -3,7 +3,7 @@
 netwaresmp - Novell Netware SMP console screensaver
 .SH SYNOPSIS
 .B netwaresmp
-[\-cpus \fI number of cpus\fP] [-speedup \fI divisor\fP] [-wormsize \fI pixels\fP] [\-display \fIhost:display.screen\fP] [\-foreground \fIcolor\fP] [\-background \fIcolor\fP] [\-window] [\-root] [\-mono] [\-install] [\-visual \fIvisual\fP] 
+[\-cpus \fI number of cpus\fP] [-speedup \fI divisor\fP] [-wormsize \fI pixels\fP] [\-display \fIhost:display.screen\fP] [\-foreground \fIcolor\fP] [\-background \fIcolor\fP] [\-window] [\-root] [\-mono] [\-circles] [\-install] [\-visual \fIvisual\fP] 
 .SH DESCRIPTION
 The \fInetwaresmp\fP screensaver written by Jeffrey Merkey <jeffmerkey@gmail.com> and Cosimo Streppone <cosimo@cpan.org>, based on PopSquares, Deco hacks, loadsnake, and Novell's Netware SMP.  The original Netware SMP screensaver was written by Jeffrey Merkey at Novell in 1994.  This version is a rewrite of the original which functions exactly the same way as it did in Netware SMP.  Each worm represents a running system cpu processor.  As system utilization increases for each cpu, the corresponding worm for that processor gets longer and moves more quicky across the screen.  As overall system load increases, all the worms slightly increase in speed.  This screensaver is very useful for monitoring cpu loading in a system since you can visually see processor utilization and loading by simply observing the worms. 
 .SH OPTIONS
@@ -27,6 +27,9 @@ Draw on the root window.
 .TP 8
 .B \-mono 
 If on a color display, pretend we're on a monochrome display.
+.TP 8
+.B \-circles 
+Use circles instead of squares to create the worms.
 .TP 8
 .B \-install
 Install a private colormap for the window.

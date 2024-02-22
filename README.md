@@ -89,21 +89,23 @@ netwaresmp [-cpus  number of cpus] [-speedup  divisor] [-wormsize  pixels]
 
 _netwaresmp_ accepts the following options:
 
-* **-cpus**  
+* **--cpus**  
   Number of cpus to start.  The default is the actual number of cpus detected from /proc/cpuinfo.  If you specify more cpus than are installed in your system, only the worms that are mapped to an actual processor will grow longer and faster when cpu load increases for that processor.  If you specify less cpus than are installed in your system, the program will default the display to the actual detected cpus.  
-* **-speedup**  
+* **--speedup**  
   speedup divisor to increase worm speed.  functions as powers of 2 i.e. speedup=4 runs at 4 times the speed, etc.  Default value is 1.
-* **-wormsize**  
+* **--wormsize**  
   size of the worm head in pixels in a range between 10 and 80.  Default value is 30.  Can be any value but works best if you use multiples of 2 to map to graphics screen dimensions (which are typically numbers which are multiples of 2 or 10).
-* **-window**  
+* **--window**  
   Draw on a newly-created window.  This is the default.
-* **-root**  
+* **--root**  
   Draw on the root window.
-* **-mono**  
+* **--mono**  
   If on a color display, pretend we're on a monochrome display.
-* **-install**  
+* **--circles**  
+  Use circles instead of squares to create the worms.
+* **--install**  
   Install a private colormap for the window.
-* **-visual _visual_**  
+* **--visual _visual_**  
   Specify which visual to use.  Legal values are the name of a visual class,
   or the id number (decimal or hex) of a specific visual.
 

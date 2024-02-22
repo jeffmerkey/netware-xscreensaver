@@ -126,6 +126,7 @@ typedef struct _STATE
     int divisor;
     int prio;
     int mono;
+    int circles;
     int sw, sh;
     unsigned long long usr[MAX_WORMS];
     unsigned long long sys[MAX_WORMS];
@@ -285,8 +286,14 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s, int clear)
        }
        XSetForeground (st->dpy, st->gc, snake_colset[which].pixel);
     }
-    XFillRectangle(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
-		   st->WIDTH, st->HEIGHT);
+
+    if (!st->circles)
+       XFillRectangle(st->dpy, st->b, st->gc, col * st->WIDTH, 
+		      row * st->HEIGHT, st->WIDTH, st->HEIGHT);
+    else
+       XFillArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
+	     st->HEIGHT, st->HEIGHT, 0, 360 * 64);
+
 
 #if VERBOSE
     printf("Xfill col: %ld row: %ld  COLS: %d LINES: %d\n", col, row, st->COLS, st->LINES);
@@ -574,7 +581,8 @@ static void clear_worm(STATE *st, WORM *s)
 
     for (n = s->length_prev - 1; n >= 0; n--) {
        worm_write(st, ' ', s->y_prev[n], s->x_prev[n], s, 1);
-       worm_write(st, ' ', s->y_prev[n], s->x_prev[n] + 1, s, 1);
+       if (!st->circles)
+          worm_write(st, ' ', s->y_prev[n], s->x_prev[n] + 1, s, 1);
     }
 }
 
@@ -639,7 +647,8 @@ static void draw_worm(STATE *st, WORM *s)
     for (n = s->length - 1; n >= 0 && div; n--) {
 	   c = n < (div + 1) * mod ? n / (div + 1) : (n - mod) / div;
 	   worm_write(st, c % 4, s->y[n], s->x[n], s, 0);
-	   worm_write(st, c % 4, s->y[n], s->x[n] + 1, s, 0);
+           if (!st->circles)
+	      worm_write(st, c % 4, s->y[n], s->x[n] + 1, s, 0);
 #if VERBOSE
        printf("cpu %d x[n] = %d y[n] = %d n = %d\n",
 	      s->cpu, s->x[n], s->y[n], n);
@@ -739,6 +748,7 @@ static void *netwaresmp_init(Display *dpy, Window window)
     st->ncolors = 16;
     st->dbuf = get_boolean_resource(st->dpy, "doubleBuffer", "Boolean");
     st->mono = get_boolean_resource (st->dpy, "mono", "Boolean");
+    st->circles = get_boolean_resource (st->dpy, "circles", "Boolean");
 
 #ifdef HAVE_COCO
     st->dbuf = False;
@@ -937,15 +947,16 @@ static const char *netwaresmp_defaults [] = {
 };
 
 static XrmOptionDescRec netwaresmp_options [] = {
-        { "-cpus", ".cpus", XrmoptionSepArg, 0},
+        { "-cpus",   ".cpus", XrmoptionSepArg, 0},
         { "-speedup", ".speedup", XrmoptionSepArg, 0},
-        { "-fg", ".foreground", XrmoptionSepArg, 0},
-        { "-bg", ".background", XrmoptionSepArg, 0},
-        { "-delay",     ".delay", XrmoptionSepArg, 0 },
-        { "-wormsize", ".wormsize", XrmoptionSepArg, 0 },
-        { "-mono",        ".mono", XrmoptionNoArg, "True" },
-        { "-db",        ".doubleBuffer", XrmoptionNoArg, "True" },
-        { "-no-db",     ".doubleBuffer", XrmoptionNoArg, "False" },
+        { "-fg",      ".foreground", XrmoptionSepArg, 0},
+        { "-bg",      ".background", XrmoptionSepArg, 0},
+        { "-delay",   ".delay", XrmoptionSepArg, 0 },
+        { "-wormsize",".wormsize", XrmoptionSepArg, 0 },
+        { "-mono",    ".mono", XrmoptionNoArg, "True" },
+        { "-circles", ".circles", XrmoptionNoArg, "True" },
+        { "-db",      ".doubleBuffer", XrmoptionNoArg, "True" },
+        { "-no-db",   ".doubleBuffer", XrmoptionNoArg, "False" },
         { 0, 0, 0, 0 }
 };
 

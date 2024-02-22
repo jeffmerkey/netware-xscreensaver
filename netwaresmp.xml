@@ -22,6 +22,7 @@
           _label="Wormsize" low="10" high="80" default="30"/>
 
   <boolean id="mono" _label="Mono Color Mode" arg-set="--mono"/>
+  <boolean id="circles" _label="Use Circles" arg-set="--circles"/>
 
   <string id="fg" _label="Foreground color" arg="--fg %" default="#FF0000"/>
   <string id="bg" _label="Background color" arg="--bg %" default="#000000"/>

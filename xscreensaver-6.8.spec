@@ -7,7 +7,7 @@
 Summary:	X screen saver and locker
 Name:		%{name}
 Version:	%{version}
-Release:	3
+Release:	4
 Epoch:		1
 License:	BSD
 Group:		Amusements/Graphics
@@ -84,6 +84,7 @@ More than 250 display modes are included in this package.
 %prep
 %setup -q
 %patch1 -p1 
+autoreconf -v -f
 
 if [ -x %{_datadir}/libtool/config.guess ]; then
   # use system-wide copy

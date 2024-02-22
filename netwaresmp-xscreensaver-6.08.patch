@@ -1,6 +1,6 @@
-diff -Naur xscreensaver-6.08/driver/XScreenSaver.ad.in xscreensaver-6.08-new/driver/XScreenSaver.ad.in
---- xscreensaver-6.08/driver/XScreenSaver.ad.in	2023-10-10 17:24:06.551773885 -0700
-+++ xscreensaver-6.08-new/driver/XScreenSaver.ad.in	2024-02-18 19:51:37.910620897 -0800
+diff -Naur xscreensaver-6.08-orig/driver/XScreenSaver.ad.in xscreensaver-6.08/driver/XScreenSaver.ad.in
+--- xscreensaver-6.08-orig/driver/XScreenSaver.ad.in	2023-10-10 17:24:06.551773885 -0700
++++ xscreensaver-6.08/driver/XScreenSaver.ad.in	2024-02-20 23:52:00.952904019 -0800
 @@ -413,6 +413,7 @@
  				wander --root				    \n\
  				xflame --root				    \n\
@@ -17,10 +17,10 @@ diff -Naur xscreensaver-6.08/driver/XScreenSaver.ad.in xscreensaver-6.08-new/dri
  *hacks.pacman.name:         Pac-Man
  *hacks.papercube.name:      Paper Cube
  *hacks.photopile.name:      Photo Pile
-diff -Naur xscreensaver-6.08/hacks/config/netwaresmp.xml xscreensaver-6.08-new/hacks/config/netwaresmp.xml
---- xscreensaver-6.08/hacks/config/netwaresmp.xml	1969-12-31 16:00:00.000000000 -0800
-+++ xscreensaver-6.08-new/hacks/config/netwaresmp.xml	2024-02-18 19:52:01.732928608 -0800
-@@ -0,0 +1,38 @@
+diff -Naur xscreensaver-6.08-orig/hacks/config/netwaresmp.xml xscreensaver-6.08/hacks/config/netwaresmp.xml
+--- xscreensaver-6.08-orig/hacks/config/netwaresmp.xml	1969-12-31 16:00:00.000000000 -0800
++++ xscreensaver-6.08/hacks/config/netwaresmp.xml	2024-02-21 13:19:26.580364904 -0800
+@@ -0,0 +1,39 @@
 +<?xml version="1.0" encoding="ISO-8859-1"?>
 +
 +<screensaver name="netwaresmp" _label="NetwareSMP">
@@ -45,6 +45,7 @@ diff -Naur xscreensaver-6.08/hacks/config/netwaresmp.xml xscreensaver-6.08-new/h
 +          _label="Wormsize" low="10" high="80" default="30"/>
 +
 +  <boolean id="mono" _label="Mono Color Mode" arg-set="--mono"/>
++  <boolean id="circles" _label="Use Circles" arg-set="--circles"/>
 +
 +  <string id="fg" _label="Foreground color" arg="--fg %" default="#FF0000"/>
 +  <string id="bg" _label="Background color" arg="--bg %" default="#000000"/>
@@ -59,9 +60,9 @@ diff -Naur xscreensaver-6.08/hacks/config/netwaresmp.xml xscreensaver-6.08-new/h
 +Netware SMP screensaver.   
 +  </_description>
 +</screensaver>
-diff -Naur xscreensaver-6.08/hacks/Makefile.in xscreensaver-6.08-new/hacks/Makefile.in
---- xscreensaver-6.08/hacks/Makefile.in	2023-10-10 17:37:05.846255309 -0700
-+++ xscreensaver-6.08-new/hacks/Makefile.in	2024-02-18 19:51:37.911620910 -0800
+diff -Naur xscreensaver-6.08-orig/hacks/Makefile.in xscreensaver-6.08/hacks/Makefile.in
+--- xscreensaver-6.08-orig/hacks/Makefile.in	2023-10-10 17:37:05.846255309 -0700
++++ xscreensaver-6.08/hacks/Makefile.in	2024-02-20 23:52:00.952904019 -0800
 @@ -111,7 +111,7 @@
  		  demon.c loop.c t3d.c penetrate.c deluxe.c compass.c \
  		  squiral.c xflame.c wander.c spotlight.c critical.c \
@@ -108,10 +109,10 @@ diff -Naur xscreensaver-6.08/hacks/Makefile.in xscreensaver-6.08-new/hacks/Makef
  petri:		petri.o		$(HACK_OBJS) $(COL) $(SPL)
  	$(CC_HACK) -o $@ $@.o	$(HACK_OBJS) $(COL) $(SPL) $(HACK_LIBS)
  
-diff -Naur xscreensaver-6.08/hacks/netwaresmp.c xscreensaver-6.08-new/hacks/netwaresmp.c
---- xscreensaver-6.08/hacks/netwaresmp.c	1969-12-31 16:00:00.000000000 -0800
-+++ xscreensaver-6.08-new/hacks/netwaresmp.c	2024-02-18 22:00:50.390648765 -0800
-@@ -0,0 +1,952 @@
+diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.c xscreensaver-6.08/hacks/netwaresmp.c
+--- xscreensaver-6.08-orig/hacks/netwaresmp.c	1969-12-31 16:00:00.000000000 -0800
++++ xscreensaver-6.08/hacks/netwaresmp.c	2024-02-21 13:19:09.974154353 -0800
+@@ -0,0 +1,963 @@
 +/***************************************************************************
 +*
 +*   Copyright(c) Jeff V. Merkey 1997-2024.  All rights reserved.
@@ -240,6 +241,7 @@ diff -Naur xscreensaver-6.08/hacks/netwaresmp.c xscreensaver-6.08-new/hacks/netw
 +    int divisor;
 +    int prio;
 +    int mono;
++    int circles;
 +    int sw, sh;
 +    unsigned long long usr[MAX_WORMS];
 +    unsigned long long sys[MAX_WORMS];
@@ -399,8 +401,14 @@ diff -Naur xscreensaver-6.08/hacks/netwaresmp.c xscreensaver-6.08-new/hacks/netw
 +       }
 +       XSetForeground (st->dpy, st->gc, snake_colset[which].pixel);
 +    }
-+    XFillRectangle(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
-+		   st->WIDTH, st->HEIGHT);
++
++    if (!st->circles)
++       XFillRectangle(st->dpy, st->b, st->gc, col * st->WIDTH, 
++		      row * st->HEIGHT, st->WIDTH, st->HEIGHT);
++    else
++       XFillArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
++	     st->HEIGHT, st->HEIGHT, 0, 360 * 64);
++
 +
 +#if VERBOSE
 +    printf("Xfill col: %ld row: %ld  COLS: %d LINES: %d\n", col, row, st->COLS, st->LINES);
@@ -688,7 +696,8 @@ diff -Naur xscreensaver-6.08/hacks/netwaresmp.c xscreensaver-6.08-new/hacks/netw
 +
 +    for (n = s->length_prev - 1; n >= 0; n--) {
 +       worm_write(st, ' ', s->y_prev[n], s->x_prev[n], s, 1);
-+       worm_write(st, ' ', s->y_prev[n], s->x_prev[n] + 1, s, 1);
++       if (!st->circles)
++          worm_write(st, ' ', s->y_prev[n], s->x_prev[n] + 1, s, 1);
 +    }
 +}
 +
@@ -753,7 +762,8 @@ diff -Naur xscreensaver-6.08/hacks/netwaresmp.c xscreensaver-6.08-new/hacks/netw
 +    for (n = s->length - 1; n >= 0 && div; n--) {
 +	   c = n < (div + 1) * mod ? n / (div + 1) : (n - mod) / div;
 +	   worm_write(st, c % 4, s->y[n], s->x[n], s, 0);
-+	   worm_write(st, c % 4, s->y[n], s->x[n] + 1, s, 0);
++           if (!st->circles)
++	      worm_write(st, c % 4, s->y[n], s->x[n] + 1, s, 0);
 +#if VERBOSE
 +       printf("cpu %d x[n] = %d y[n] = %d n = %d\n",
 +	      s->cpu, s->x[n], s->y[n], n);
@@ -853,6 +863,7 @@ diff -Naur xscreensaver-6.08/hacks/netwaresmp.c xscreensaver-6.08-new/hacks/netw
 +    st->ncolors = 16;
 +    st->dbuf = get_boolean_resource(st->dpy, "doubleBuffer", "Boolean");
 +    st->mono = get_boolean_resource (st->dpy, "mono", "Boolean");
++    st->circles = get_boolean_resource (st->dpy, "circles", "Boolean");
 +
 +#ifdef HAVE_COCO
 +    st->dbuf = False;
@@ -1051,29 +1062,30 @@ diff -Naur xscreensaver-6.08/hacks/netwaresmp.c xscreensaver-6.08-new/hacks/netw
 +};
 +
 +static XrmOptionDescRec netwaresmp_options [] = {
-+        { "-cpus", ".cpus", XrmoptionSepArg, 0},
++        { "-cpus",   ".cpus", XrmoptionSepArg, 0},
 +        { "-speedup", ".speedup", XrmoptionSepArg, 0},
-+        { "-fg", ".foreground", XrmoptionSepArg, 0},
-+        { "-bg", ".background", XrmoptionSepArg, 0},
-+        { "-delay",     ".delay", XrmoptionSepArg, 0 },
-+        { "-wormsize", ".wormsize", XrmoptionSepArg, 0 },
-+        { "-mono",        ".mono", XrmoptionNoArg, "True" },
-+        { "-db",        ".doubleBuffer", XrmoptionNoArg, "True" },
-+        { "-no-db",     ".doubleBuffer", XrmoptionNoArg, "False" },
++        { "-fg",      ".foreground", XrmoptionSepArg, 0},
++        { "-bg",      ".background", XrmoptionSepArg, 0},
++        { "-delay",   ".delay", XrmoptionSepArg, 0 },
++        { "-wormsize",".wormsize", XrmoptionSepArg, 0 },
++        { "-mono",    ".mono", XrmoptionNoArg, "True" },
++        { "-circles", ".circles", XrmoptionNoArg, "True" },
++        { "-db",      ".doubleBuffer", XrmoptionNoArg, "True" },
++        { "-no-db",   ".doubleBuffer", XrmoptionNoArg, "False" },
 +        { 0, 0, 0, 0 }
 +};
 +
 +XSCREENSAVER_MODULE ("NetwareSMP", netwaresmp)
-diff -Naur xscreensaver-6.08/hacks/netwaresmp.man xscreensaver-6.08-new/hacks/netwaresmp.man
---- xscreensaver-6.08/hacks/netwaresmp.man	1969-12-31 16:00:00.000000000 -0800
-+++ xscreensaver-6.08-new/hacks/netwaresmp.man	2024-02-18 19:51:37.911620910 -0800
-@@ -0,0 +1,79 @@
+diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.man xscreensaver-6.08/hacks/netwaresmp.man
+--- xscreensaver-6.08-orig/hacks/netwaresmp.man	1969-12-31 16:00:00.000000000 -0800
++++ xscreensaver-6.08/hacks/netwaresmp.man	2024-02-21 13:19:16.578238090 -0800
+@@ -0,0 +1,63 @@
 +.TH XScreenSaver 1 "27-Apr-97" "X Version 11"
 +.SH NAME
 +netwaresmp - Novell Netware SMP console screensaver
 +.SH SYNOPSIS
 +.B netwaresmp
-+[\-cpus \fI number of cpus\fP] [-speedup \fI divisor\fP] [-wormsize \fI pixels\fP] [\-display \fIhost:display.screen\fP] [\-foreground \fIcolor\fP] [\-background \fIcolor\fP] [\-window] [\-root] [\-mono] [\-install] [\-visual \fIvisual\fP] [\-delay \fIseconds\fP] [\-max\-depth \fIint\fP] [\-min\-width \fIint\fP] [\-min\-height \fIint\fP] [\-cycle] [\-no\-cycle] [\-cycle\-delay]
++[\-cpus \fI number of cpus\fP] [-speedup \fI divisor\fP] [-wormsize \fI pixels\fP] [\-display \fIhost:display.screen\fP] [\-foreground \fIcolor\fP] [\-background \fIcolor\fP] [\-window] [\-root] [\-mono] [\-circles] [\-install] [\-visual \fIvisual\fP] 
 +.SH DESCRIPTION
 +The \fInetwaresmp\fP screensaver written by Jeffrey Merkey <jeffmerkey@gmail.com> and Cosimo Streppone <cosimo@cpan.org>, based on PopSquares, Deco hacks, loadsnake, and Novell's Netware SMP.  The original Netware SMP screensaver was written by Jeffrey Merkey at Novell in 1994.  This version is a rewrite of the original which functions exactly the same way as it did in Netware SMP.  Each worm represents a running system cpu processor.  As system utilization increases for each cpu, the corresponding worm for that processor gets longer and moves more quicky across the screen.  As overall system load increases, all the worms slightly increase in speed.  This screensaver is very useful for monitoring cpu loading in a system since you can visually see processor utilization and loading by simply observing the worms. 
 +.SH OPTIONS
@@ -1087,7 +1099,7 @@ diff -Naur xscreensaver-6.08/hacks/netwaresmp.man xscreensaver-6.08-new/hacks/ne
 +speedup divisor to increase worm speed.  functions as powers of 2 i.e. speedup=4 runs at 4 times the speed, etc.  Default value is 1.
 +.TP 8
 +.B \-wormsize
-+size of the worm head in pixels in a range between 10 and 80.  Default value is 20.  Can be any value but works best if you use multiples of 2 to map to graphics screen dimensions (which are typically numbers which are multiples of 2 or 10).
++size of the worm head in pixels in a range between 10 and 80.  Default value is 30.  Can be any value but works best if you use multiples of 2 to map to graphics screen dimensions (which are typically numbers which are multiples of 2 or 10).
 +.TP 8
 +.B \-window
 +Draw on a newly-created window.  This is the default.
@@ -1098,31 +1110,15 @@ diff -Naur xscreensaver-6.08/hacks/netwaresmp.man xscreensaver-6.08-new/hacks/ne
 +.B \-mono 
 +If on a color display, pretend we're on a monochrome display.
 +.TP 8
++.B \-circles 
++Use circles instead of squares to create the worms.
++.TP 8
 +.B \-install
 +Install a private colormap for the window.
 +.TP 8
 +.B \-visual \fIvisual\fP
 +Specify which visual to use.  Legal values are the name of a visual class,
 +or the id number (decimal or hex) of a specific visual.
-+.TP 8
-+.B \-delay \fIseconds\fP
-+How long to wait before starting over.  Default 5 seconds.
-+.TP 8
-+.B \-max\-depth \fIinteger\fP
-+How deep to subdivide.  Default 12.
-+.TP 8
-+.B \-min-width \fIinteger\fP
-+.B \-min-height \fIinteger\fP
-+The size of the smallest rectangle to draw.  Default 20x20.
-+.TP 8
-+.B \-cycle
-+.TP 8
-+.B \-no\-cycle
-+Whether to do color cycling.  Default False.
-+.TP 8
-+.B \-cycle\-delay \fIusecs\fP
-+If color cycling, how often to change the colors.  Default 1000000,
-+or 1 second.
 +.SH ENVIRONMENT
 +.PP
 +.TP 8
@@ -1147,9 +1143,9 @@ diff -Naur xscreensaver-6.08/hacks/netwaresmp.man xscreensaver-6.08-new/hacks/ne
 +based on PopSquares, Deco hacks, loadsnake, and Novell's Netware SMP.  The 
 +original Netware SMP screensaver was written by Jeffrey Merkey at Novell in
 +1994.  
-diff -Naur xscreensaver-6.08/xscreensaver.spec xscreensaver-6.08-new/xscreensaver.spec
---- xscreensaver-6.08/xscreensaver.spec	2023-10-10 17:24:04.989688938 -0700
-+++ xscreensaver-6.08-new/xscreensaver.spec	2024-02-18 19:59:53.903027570 -0800
+diff -Naur xscreensaver-6.08-orig/xscreensaver.spec xscreensaver-6.08/xscreensaver.spec
+--- xscreensaver-6.08-orig/xscreensaver.spec	2023-10-10 17:24:04.989688938 -0700
++++ xscreensaver-6.08/xscreensaver.spec	2024-02-20 23:52:00.953904032 -0800
 @@ -1,10 +1,13 @@
  %define	name xscreensaver
  %define	version 6.08
@@ -1161,7 +1157,7 @@ diff -Naur xscreensaver-6.08/xscreensaver.spec xscreensaver-6.08-new/xscreensave
  Name:		%{name}
  Version:	%{version}
 -Release:	1
-+Release:	2
++Release:	4
  Epoch:		1
  License:	BSD
  Group:		Amusements/Graphics
