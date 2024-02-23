@@ -133,7 +133,8 @@ For detailed instructions on how to install and configure the XScreensaver base 
 the [Frequently Asked Questions](https://www.jwz.org/xscreensaver/faq.html) for information about common integration
 and installation questions and detailed information about the XScreensaver program itself.  
 
-You can report any bugs you encounter regarding the XScreensaver program and utilities by opening a [bug report](https://www.jwz.org/xscreensaver/bugs.html) at the main XScreensaver support website at [www.jwz.org](https:/www.jwz.org).
+You can report any bugs you encounter regarding the XScreensaver program and utilities by opening a [bug report](https://www.jwz.org/xscreensaver/bugs.html) at the main XScreensaver support website at [www.jwz.org](https://www.jwz.org/xscreensaver/
+).
 
 You can download other versions of XScreensaver, including the most recent versions at the [XScreensaver Download Page](https://www.jwz.org/xscreensaver/download.html).
 
