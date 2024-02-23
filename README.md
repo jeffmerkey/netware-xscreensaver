@@ -5,6 +5,7 @@
 - [Quick Start Guide](#quick-start-guide)
 - [Building the Screensaver from Source](#building-the-screensaver-from-source)
 - [Building the Screensaver as an RPM Package (Redhat/CentOS/SuSe)](#building-as-an-rpm-package)
+- [Building the Screensaver as a Debian Package (Debian/Ubuntu)](#building-as-a-debian-package)    
 - [NetwareSMP Options](#netwaresmp-options)
 - [Copyright](#copyright)
 - [Authors](#authors)
@@ -19,14 +20,20 @@ The _netwaresmp_ screensaver written by Jeffrey Merkey &lt;jeffmerkey@gmail.com&
 You can download precompiled RPM packages which contain the entire XScreensaver program with netwaresmp integrated from
 the [release page](https://github.com/jeffmerkey/netware-xscreensaver/releases) for this project, or you can build the 
 program from the git sources.  The current netwaresmp xscreensaver module is compiled against the XScreensaver v6.08 base 
-and you may have to deinstall any older version of the Xscreensaver program you are running and reinstall with this RPM.  
+and you may have to deinstall any older version of the Xscreensaver program you are running and reinstall with this RPM or DEB
+packages.  
 
-If you want to build the program from scratch with the git sources rather than use the pre-compiled RPMS packages, then please skip to the section [Building the Screensaver from Source](#building-the-screensaver-from-source) for instructions on how to do this. 
+Most Linux distributions use an outdated xscreensaver program which lacks current bug fixes and new capabilities.    
+It's a good idea to upgrade to the xscreensaver 6.08 release since there have been many bug fixes and enhanced features in 
+the most current maintained version of XScreensaver. 
+
+If you want to build the program from scratch with the git sources rather than use the pre-compiled RPMS and DEB packages, then please skip to the section [Building the Screensaver from Source](#building-the-screensaver-from-source) for instructions on how to do this. 
  
-Packages are provided in binary and source versions, and can be downloaded and 
-installed directly or rebuilt for a different target architecture such as ARM64. Package types are Red Hat Package Manager (RPM) packages for binary installation and Source RPM packages (SRPMS) for source code installation.  
+Packages are provided in binary and source versions, and can be downloaded and installed directly or rebuilt for a different 
+target architecture such as ARM64. Package types are Red Hat Package Manager (RPM) packages and Debian (DEB) packages for 
+binary installation and Source RPM packages (SRPMS) and Debbuild SDEB packages for source code installation.  
 
-RPM packages for each release include a binary architecture specific package
+RPM and DEB packages for each release include a binary architecture specific package
 and a source package which can be downloaded and built/rebuilt and which contains the source code.
 
 For example, the release v6.08-4 contains the following packages in the release section:
@@ -36,25 +43,46 @@ For example, the release v6.08-4 contains the following packages in the release 
 - [xscreensaver-netwaresmp-6.08-4.src.rpm](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-4/xscreensaver-netwaresmp-6.08-4.src.rpm)
 - [xscreensaver-netwaresmp-6.08-4.x86_64.rpm](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-4/xscreensaver-netwaresmp-6.08-4.x86_64.rpm)
 
+### **Debian Based Packages (Debian, Ubuntu)**
+
+- [xscreensaver-netwaresmp-1.6.08-4.sdeb](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-4/xscreensaver-netwaresmp-1.6.08-4.sdeb)
+- [xscreensaver_netwaresmp_1.6.08-4_amd64.deb](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-4/xscreensaver_netwaresmp_1.6.08-4_amd64.deb)
+
 ### **Removing a Previous Installation of Outdated Versions of XScreensaver**
 
 Most of the XScreensaver packages shipped or distributed by RedHat, Debian, and many Distros of Linux are quite old
 and outdated and do not contain current bug fixes or support and should be upgraded in any event.  
 
-To remove a previously installed or outdated version of XScreensaver with the rpm package manager for x86_64:
+To remove a previously installed or outdated version of XScreensaver with the RPM package manager:
 ```sh
 rpm -e xscreensaver
 ```
 
-To remove a previously installed or outdated version of XScreensaver and all package dependencies with the dnf or yum package 
-manager for Linux:
+To remove a previously installed or outdated version of XScreensaver and all package dependencies with the dnf or yum RPM package 
+manager for RPM based Linux Distributions:
 ```sh
 dnf remove xscreensaver
 ```
 
+To remove a previously installed or outdated version of XScreensaver with the DEB package manager for Debian based Linux 
+distributions:
+```sh
+dpkg -r xscreensaver
+```
+
+To remove a previously installed or outdated version of XScreensaver and all package dependencies with the apt DEB package 
+manager for Debian based Linux Distributions:
+```sh
+apt autoremove xscreensaver
+```
+or
+```sh
+apt-get autoremove xscreensaver
+```
+
 ### **Installing Binary Packages**
 
-To install the binary package with the rpm package manager for x86_64:
+To install the binary package with the RPM package manager:
 ```sh
 rpm -i xscreensaver-netwaresmp-6.08-4.x86_64.rpm
 ```
@@ -64,18 +92,36 @@ To deinstall the RPM binary package:
 rpm -e xscreensaver-netwaresmp
 ```
 
+To install the binary package with the Debian dpkg package manager for amd64:
+```sh
+dpkg -i xscreensaver_netwaresmp_1.6.08-4_amd64.deb
+```
+
+To deinstall the Debian dpkg binary package:
+```sh
+dpkg -r xscreensaver_netwaresmp
+```
+
 ### **Installing Source Packages**
 
-To install the source package with the rpm package manager:
+To install the source package with the RPM package manager:
 ```sh
 rpm -i xscreensaver-netwaresmp-6.08-4.src.rpm
 ```
+
 *(Note: rpm installs the source code files in /root/rpmbuild/ as top directory for RedHat and CentOS
 platforms.  SuSe platforms install the source code files in /usr/src/packages/)*
 
-For building or rebuilding RPMS Packages after you have installed the associated source packages on your platform, refer to the following:
+To install the source package with the Debbuild package tool:
+```sh
+debbuild -i xscreensaver-netwaresmp-1.6.08-4.sdeb
+```
+*(Note: Debbuild installs the source code files in /root/debbuild/ as top directory)*
+
+For building or rebuilding RPMS or DEB Packages after you have installed the associated source packages on your platform, refer to the following:
 
 - [Building the Screensaver as an RPM Package (Redhat/CentOS/SuSe)](#building-as-an-rpm-package)
+- [Building the Screensaver as a Debian Package (Debian/Ubuntu)](#building-as-a-debian-package)
 
 ## **_netwaresmp_ Options**
 
@@ -347,12 +393,34 @@ manually install the .spec file into the \<top directory\>/SPECS/ directory and
 the source code tarball in the \<top directory\/SOURCES/ directory, then attempt 
 to build the rpm package.
 
-To build the Screensaver using the rpm tool, change directories (cd) into the /root/rpmbuild/SPECS/ directory (/usr/src/packages/SPECS/ for SuSe) and enter the following command:
+To build the XScreensaver using the rpm tool, change directories (cd) into the /root/rpmbuild/SPECS/ directory (/usr/src/packages/SPECS/ for SuSe) and enter the following command:
 
 ```sh
 rpmbuild -ba xscreensaver-6.8.spec <enter>
 ```
 
+## **Building as a Debian Package**
+
+In order to build the screensaver as a Debian package, the program must be compressed into a tar.gz
+file and the tar.gz file named to match the versioning information contained in the associated .spec file. Spec files are special files which contain instructions on how to build a particular package from a source code archive.  
+
+Debian Packages can be built using a utility called "debbuild" and use a top directory structure which is similar to that used by the RPM tool but using /root/debbuild/ as the "top directory".  These "top directories" will contain BUILD, BUILDROOT, SPECS, DEBS, SDEBS, and SOURCES subdirectories and follows a similar layout that is used for RPM files.  
+
+The SPECS directory contains the \*.spec files used to build DEB and SDEB packages.  The SOURCES subdirectory will contain the soure code archive file referred to in the \*.spec file used to build the 
+DEB and SDEB packages.
+
+See the [Quick Start Guide](#quick-start-guide) on instructions for installing the 
+source SDEB which installs both the .spec file and source archive file (tar.gz) into 
+the debbuild top directory (i.e. /root/debbuild/).  You should have previously installed 
+the SDEB file before attempting to build the DEB package.  You can also manually 
+install the .spec file into the \<top directory\>/SPECS/ directory and the source 
+code tarball in the \<top directory\/SOURCES/ directory, then attempt to build the 
+DEB package.
+
+To build the XScreensaver using debbuild, change directories (cd) into the /root/debbuild/SPECS/ directory and enter the following command:
+```sh
+debbuild -vv -ba xscreensaver-6.08.spec <enter>
+```
 ## **Copyright**
 
 Copyright © 1994-2024 by Jamie Zawinski, Jeffrey Merkey, Cosimo Streppone, 
