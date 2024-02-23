@@ -128,7 +128,7 @@ For building or rebuilding RPMS or DEB Packages after you have installed the ass
 ## **Configuring XScreensaver**
 
 For detailed instructions on how to install and configure the XScreensaver base program, please refer to the online 
-[Documentation and Manuals for XScreensver](https://www.jwz.org/xscreensaver/man1.html).  You should also review 
+[Documentation and Manuals for XScreensaver](https://www.jwz.org/xscreensaver/man1.html).  You should also review 
 the [Frequently Asked Questions](https://www.jwz.org/xscreensaver/faq.html) for information about common integration
 and installation questions and detailed information about the XScreensaver program itself.  
 
