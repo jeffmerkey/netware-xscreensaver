@@ -8,12 +8,11 @@ Table of Contents
 -   Description
 -   Quick Start Guide
 -   Configuring XScreensaver
--   netwaresmp Options
+-   Netware SMP Screensaver Options
 -   Command Line Options
 -   Building the Screensaver from Source
 -   Building the Screensaver as an RPM Package (Redhat/CentOS/SuSe)
 -   Building the Screensaver as a Debian Package (Debian/Ubuntu)
--   Netware SMP Screensaver Options
 -   Copyright
 -   Authors
 -   Issues / Problems / Help
