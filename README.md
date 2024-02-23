@@ -17,11 +17,11 @@ The _netwaresmp_ screensaver written by Jeffrey Merkey &lt;jeffmerkey@gmail.com&
 
 ## Quick Start Guide
 
-You can download precompiled RPM packages which contain the entire XScreensaver program with netwaresmp integrated from
-the [release page](https://github.com/jeffmerkey/netware-xscreensaver/releases) for this project, or you can build the 
-program from the git sources.  The current netwaresmp xscreensaver module is compiled against the XScreensaver v6.08 base 
-and you may have to deinstall any older version of the Xscreensaver program you are running and reinstall with this RPM or DEB
-packages.  
+You can download precompiled Red Hat Package Manager (RPM) and Debian (DEB) packages which contain the entire XScreensaver 
+program with netwaresmp integrated from the [release page](https://github.com/jeffmerkey/netware-xscreensaver/releases) for 
+this project, or you can build the program from the git sources.  The current netwaresmp xscreensaver module is compiled 
+against the XScreensaver v6.08 base and you may have to deinstall any older version of the Xscreensaver program you are 
+running and then reinstall with the RPM or DEB packages listed in the releases section.  
 
 Most Linux distributions use an outdated xscreensaver program which lacks current bug fixes and new capabilities.    
 It's a good idea to upgrade to the xscreensaver 6.08 release since there have been many bug fixes and enhanced features in 
