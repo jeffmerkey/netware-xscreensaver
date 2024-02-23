@@ -3,6 +3,9 @@
 ## Table of Contents <!-- omit in toc -->
 - [Description](#description)
 - [Quick Start Guide](#quick-start-guide)
+- [Configuring XScreensaver](#configuring-xscreensaver)
+- [netwaresmp Options](#netwaresmp-options)
+- [Command Line Options](#command-line-options)
 - [Building the Screensaver from Source](#building-the-screensaver-from-source)
 - [Building the Screensaver as an RPM Package (Redhat/CentOS/SuSe)](#building-as-an-rpm-package)
 - [Building the Screensaver as a Debian Package (Debian/Ubuntu)](#building-as-a-debian-package)    
@@ -123,6 +126,17 @@ For building or rebuilding RPMS or DEB Packages after you have installed the ass
 - [Building the Screensaver as an RPM Package (Redhat/CentOS/SuSe)](#building-as-an-rpm-package)
 - [Building the Screensaver as a Debian Package (Debian/Ubuntu)](#building-as-a-debian-package)
 
+## **Configuring XScreensaver**
+
+For detailed instructions on how to install and configure the XScreensaver base program, please refer to the online 
+[Documentation and Manuals for XScreensver](https://www.jwz.org/xscreensaver/man1.html).  You should also review 
+the [Frequently Asked Questions](https://www.jwz.org/xscreensaver/faq.html) for information about common integration
+and installation questions and detailed information about the XScreensaver program itself.  
+
+You can report any bugs you encounter regarding the XScreensaver program and utilities by opening a [bug report](https://www.jwz.org/xscreensaver/bugs.html) at the main XScreensaver support website at [www.jwz.org](https:/www.jwz.org).
+
+You can download other versions of XScreensaver, including the most recent versions at the [XScreensaver Download Page](https://www.jwz.org/xscreensaver/download.html).
+
 ## **_netwaresmp_ Options**
 
 ```
@@ -165,7 +179,7 @@ _netwaresmp_ accepts the following options:
 
 ## **Building the Screensaver from Source**
 
-It should be noted that since the xscreensaver-netwaresmp code base is provided as a Source RPM package, it's very simple and straight forward to rebuild the RPM packages without needing to resort to a manual rebuild.  However, users on ARM64 systems and Debian users may need to build the program manually.  You are encouraged to use the RPM method to rebuild the code but in the event you need to do so manually, the following section describes the steps for accomplishing this. 
+It should be noted that since the xscreensaver-netwaresmp code base is provided as a Source RPM and DEB packages, it's very simple and straight forward to rebuild the RPM or DEB packages without needing to resort to a manual rebuild.  However, users on ARM64 systems and Debian users may need to build the program manually.  You are encouraged to use the RPM method to rebuild the code but in the event you need to do so manually, the following section describes the steps for accomplishing this. 
 
 In order to build the xscreensaver with netwaresmp fully integrated, you should first clone the xscreensaver-6.08-netwaresmp repository.  This repository is a generic xscreensaver-6.08 code base with the X11 netwaresmp screensaver included as a patch series.  This approach is implemented with a patch series in this manner for two reasons.  First, it is necessary to re-run the autoreconf automake program after downloading the sources and applying the patch series in order to integrate the netwaresmp screensaver into the xscreensaver-settings configuration tool.  The build for xscreensaver-settings setup utility uses a static file to list integrated screensavers and this file is only updated by running autoreconf against the code base.  Second, this approach allows the netwaresmp patch series to be applied to previous versions of xscreensaver package prior to the 6.08 release.  
 
