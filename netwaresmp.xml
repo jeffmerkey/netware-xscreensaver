@@ -21,8 +21,16 @@
   <number id="wormsize" type="spinbutton" arg="--wormsize %"
           _label="Wormsize" low="10" high="80" default="30"/>
 
+  <select id="shape">
+    <option id="classic"  _label="Classic (Squares)" />
+    <option id="circles"  _label="Circles"   arg-set="--shape 1"/>
+    <option id="snipes"   _label="Snipes"    arg-set="--shape 2"/>
+    <option id="triangle" _label="Triangles" arg-set="--shape 3"/>
+    <option id="3dballs"  _label="3D Balls"  arg-set="--shape 4"/>
+    <option id="arrows"   _label="Arrows"    arg-set="--shape 5"/>
+  </select>
+
   <boolean id="mono" _label="Mono Color Mode" arg-set="--mono"/>
-  <boolean id="circles" _label="Use Circles" arg-set="--circles"/>
 
   <string id="fg" _label="Foreground color" arg="--fg %" default="#FF0000"/>
   <string id="bg" _label="Background color" arg="--bg %" default="#000000"/>
