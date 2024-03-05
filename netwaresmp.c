@@ -123,6 +123,7 @@ typedef struct _STATE
     Colormap cmap;
     XftDraw *draw;
     XftColor color;
+    XftFont *xftfont;
     int hascolor;
 
     int delay, wormsize, ncolors, dbuf;
@@ -130,6 +131,7 @@ typedef struct _STATE
     XWindowAttributes xgwa;
     GC gc; 
     XColor **colors;
+    XColor *black;
     Pixmap b, ba, bb;
 #ifdef HAVE_DOUBLE_BUFFER_EXTENSION
     XdbeBackBuffer backb;
@@ -145,9 +147,6 @@ typedef struct _STATE
     int prio;
     int mono;
     int shape;
-    XFontStruct *font;
-    XftFont *xftfont;
-    XftColor xftcolor_fg, xftcolor_bg;
     char *charset;
     int sw, sh;
     unsigned long usr[MAX_WORMS];
@@ -263,7 +262,7 @@ static XColor **init_colorsets(STATE *st)
 
     int rgb[COLORSETS][3] = {
 	{ 0xFFFF, 0,      0      }, /* red */
-        { 0,      0,      0xFFFF }, /* blue */
+        { 0,      0x7FFF, 0xFFFF }, /* blue */
         { 0,      0xFFFF, 0      }, /* green */
         { 0,      0xFFFF, 0xFFFF }, /* cyan */
 
@@ -294,8 +293,8 @@ static XColor **init_colorsets(STATE *st)
 
     int rgb_low[COLORSETS][3] = {
 	{ 0x1,    0,      0      }, /* red target */
-        { 0,      0,      0x1    }, /* blue target */
-        { 0,      0x1,    0      }, /* green target */
+	{ 0,      0x1,    0x2    }, /* blue target */
+	{ 0,      0x1,    0      }, /* green target */
         { 0,      0x1,    0x1    }, /* cyan target */
 
 	{ 0x1,    0x1,    0      }, /* yellow target */
@@ -314,6 +313,28 @@ static XColor **init_colorsets(STATE *st)
         { 0,      0,      0      }, /* copper target */
     };
 
+    int rgb_low_snipes[COLORSETS][3] = {
+	{ 0x7FFF,   0,    0      }, /* red target */
+	{ 0,      0x1,    0x2    }, /* blue target */
+	{ 0,      0x1,    0      }, /* green target */
+        { 0,      0x1,    0x1    }, /* cyan target */
+
+	{ 0x1,    0x1,    0      }, /* yellow target */
+        { 0,      0,      0      }, /* britewhite targer */
+        { 0x1,    0,      0x1    }, /* magenta target */
+        { 0,      0,      0x7    }, /* purple target */
+
+	{ 0x2,    0x1,    0      }, /* orange target */
+        { 0,      0x9,    0x4    }, /* olive target */
+        { 0x7FFF,   0,    0      }, /* burgundy target */
+        { 0x2,    0x1,    0x1    }, /* salmon target */
+
+	{ 0x1,    0x1,    0      }, /* yellowgreen target */
+	{ 0x1,    0x2,    0x2    }, /* ltblue target */
+        { 0x2,    0x1,    0x2    }, /* ltmagenta target */
+        { 0,      0,      0      }, /* copper target */
+    };
+
     XColor** colset = (XColor **)calloc(COLORSETS, sizeof(XColor *));
 
     if (st->mono) {
@@ -321,131 +342,60 @@ static XColor **init_colorsets(STATE *st)
            colset[n] = make_colorset(st, rgbmono, NULL);
     }
     else {
-       for (n = 0; n < COLORSETS; n++)
-           colset[n] = make_colorset(st, rgb[n], rgb_low[n]);
+       for (n = 0; n < COLORSETS; n++) {
+           if (st->shape == SNIPES)
+              colset[n] = make_colorset(st, rgb[n], rgb_low_snipes[n]);
+           else
+	      colset[n] = make_colorset(st, rgb[n], rgb_low[n]);
+       }
     }
     return colset;
 }
 
-static int XScanFonts(STATE *st)
+static void xcolor_to_xftcolor(STATE *st, XColor *xcolor, unsigned short alpha)
+{
+	st->color.color.red = xcolor->red;
+	st->color.color.green = xcolor->green;
+	st->color.color.blue = xcolor->blue;
+	st->color.color.alpha = alpha;
+	st->color.pixel = 0xFFFFFF00;
+}
+
+static void set_xftcolor(STATE *st, unsigned long tcolor, unsigned short alpha)
+{
+	st->color.color.red = ((tcolor  & 0xFF0000) >> 16 ) * 0x101;
+	st->color.color.green = ((tcolor  & 0x00FF00) >> 8 ) * 0x101;
+	st->color.color.blue = ((tcolor  & 0x0000FF) ) * 0x101;
+	st->color.color.alpha = alpha;
+	st->color.pixel = 0xFFFFFF00;
+}
+
+static int XLoadFonts(STATE *st)
 {
     char pattern[1024];
-    char **names = 0;
-    char **names2 = 0;
-    XFontStruct *info = 0;
-    int count = 0, count2 = 0;
-    int i, j;
-    XGlyphInfo extents;
-    int rbearing, width;
-    float ratio;
-    float min = 0.8;
-    const char *fontname = "DejaVu Sans Mono:size=20:antialias=true"; 
+    const char *fontname = 
+    "DejaVu Sans Mono:pixelsize=%d:antialias=false;style=bold;"; 
 
-    sprintf (pattern, "-%s-%s-%s-%s-%s-%s-%d-%s-%s-%s-%s-%s-%s",
-             "*",         /* foundry */
-             "*",         /* family */
-             "*",         /* weight */
-             "r",         /* slant */
-             "*",         /* swidth */
-             "*",         /* adstyle */
-             st->HEIGHT,  /* pixel size */
-             "0",         /* point size */
-             "100",       /* resolution x */
-             "100",       /* resolution y */
-             "p",         /* spacing */
-             "*",         /* avg width */
-             st->charset ? st->charset : ""); /* registry + encoding */
+    sprintf(pattern, fontname, st->HEIGHT);
+#if VERBOSE
+    fprintf (stderr, "%s: xft pattern %s\n", progname, pattern);
+#endif
 
-    names = XListFonts (st->dpy, pattern, 1000, &count);
-/*#if VERBOSE*/
-    fprintf (stderr, "%s: pattern %s\n", progname, pattern);
-    fprintf(stderr, "XListFonts count:  %d\n", count);
-    for (j = 0; j < count; j++) {
-        fprintf(stderr, "font %s\n", names[j]);
-    }
-/*#endif*/
-    if (count <= 0)
-    {
-        fprintf (stderr, "%s: no scalable fonts found!  (pattern: %s)\n",
-                 progname, pattern);
-        return 1;
-    }
-
-    i = random() % count;
-    j = i = 0;
-    names2 = XListFontsWithInfo (st->dpy, names[i], 1000, &count2, &info);
-/*#if VERBOSE*/
-    fprintf(stderr, "XListFontsWithInfo count: %d\n", count2);
-    for (j = 0; j < count2; j++) {
-        fprintf(stderr, "font %s\n", names2[j]);
-    }
-/*#endif*/
-    if (count2 <= 0)
-    {
-        fprintf (stderr, "%s: pattern %s\n gave unusable %s\n",
-                 progname, pattern, names[i]);
-        return 1;
-    }
-
-    st->font = XLoadQueryFont(st->dpy, names[i]);  
-/*#if VERBOSE*/
-    fprintf(stderr, "font returned: %p  for name %s\n", (void *)st->font, names[i]);
-/*#endif*/
-    if (st->font)
-       XSetFont(st->dpy, st->gc, st->font->fid); 
-
-    if (count2)
-       XFreeFontInfo(names2, info, count2);
-    if (count)
-       XFreeFontNames(names);
-
-    st->xftfont = XftFontOpenXlfd(st->dpy, screen_number(st->xgwa.screen),
-                                  pattern);
-    if (!st->xftfont)
-    {
-      fprintf (stderr, "%s: unable to load font %s\n", progname, pattern);
-      return 1;
-    }
-    else
-    {
-      fprintf (stderr, "%s: pattern %s font %p\n", progname, pattern,
-	       (void *)st->xftfont);
-    }
-
-    XftTextExtentsUtf8 (st->dpy, st->xftfont, (FcChar8 *) "M", 1, &extents);
-    rbearing = extents.width - extents.x;
-    width = extents.xOff;
-    ratio = rbearing / (float) width;
-    fprintf (stderr, "%s: M ratio %.2f (%d %d): %s\n", progname,
-               ratio, rbearing, width, pattern);
-    if (ratio < min)
-    {
-       fprintf (stderr, "%s: skipping font with broken metrics: %s\n",
-                   progname, pattern);
-       return 1;
-    }
-/*
-    if (st->xftfont)
-       XftFontClose (st->dpy, st->xftfont);
-    st->xftfont = NULL;
-*/
     st->scr = DefaultScreen(st->dpy);
     st->cmap = DefaultColormap(st->dpy, st->scr);
-/*
-    st->xftfont = XftFontOpenName(st->dpy, st->scr, fontname);
+    st->xftfont = XftFontOpenName(st->dpy, st->scr, pattern);
     if (!st->xftfont) {
-        fprintf (stderr, "%s: could not load font %s\n",
+        fprintf (stderr, "%s: could not load base font %s\n",
                  progname, fontname);
         return 1;
     }
-*/    
-    if (!(st->hascolor = XftColorAllocName(st->dpy, st->visual, 
-				           st->cmap, "#FFFFFF", 
- 			                   &st->color))) {
+    
+    if (!(st->hascolor = XftColorAllocName(st->dpy, st->visual, st->cmap, 
+				           "white", &st->color))) {
        fprintf (stderr, "%s: cannot allocate xft color\n", progname);
        return 1;
     }
-    
+
     st->draw = XftDrawCreate(st->dpy, st->window, st->visual, st->cmap);
     if (!st->draw) {
        fprintf (stderr, "%s: cannot allocate XftDraw\n", progname);
@@ -459,8 +409,8 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
 		       int clear, int direction, int head)
 {
     int which;
-    int adjust = st->HEIGHT / 2;
-    XColor *snake_colset;
+    int adjust;
+    XColor *worm_colset;
 
 #if VERBOSE
     printf("Xfill(%d) direction %d col: %ld row: %ld  COLS: %d LINES: %d\n", 
@@ -475,12 +425,21 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
     }
 
     /* set defaults */
-    snake_colset = st->colors[s->color];
+    if (!st->black || !st->colors) {
+       fprintf (stderr, "%s: basic colorsets not initialized\n", progname);
+       return;
+    }    
+
+    worm_colset = st->colors[s->color];
+    if (!worm_colset) {
+       fprintf (stderr, "%s: worm colorsets not initialized\n", progname);
+       return;
+    }    
     which = st->ncolors >> 1;
 
     if (clear) {
        /* clear previous block */
-       XSetForeground(st->dpy, st->gc, st->colors[0][0].pixel);
+       XSetForeground(st->dpy, st->gc, st->black[0].pixel);
     }
     else {
        switch (c)
@@ -492,27 +451,80 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
      	     break;
           /* dark shade block */
           case 1:
-             st->mono 
-             ? (which = (st->ncolors >> 1) + 2) 
-	     : (which = (st->ncolors >> 1) + 2);
+	     which = (st->ncolors >> 1) + 2;
              break;
           /* medium shade block */
           case 2:
-             st->mono 
-             ? (which = (st->ncolors >> 1) + 3) 
-	     : (which = (st->ncolors >> 1) + 3);
+	     which = (st->ncolors >> 1) + 3;
              break;
           /* light shade block */
           case 3:
-             st->mono 
-	     ? (which = (st->ncolors >> 1) + 4) 
-	     : (which = (st->ncolors >> 1) + 4);
+	     which = (st->ncolors >> 1) + 4;
              break;
        }
-       XSetForeground (st->dpy, st->gc, snake_colset[which].pixel);
+       XSetForeground(st->dpy, st->gc, worm_colset[which].pixel);
     }
 
     switch (st->shape) {
+    /* from the Novell Netware Snipes Network Game */
+    case SNIPES:
+       if (!st->xftfont)
+          break;
+       
+       if (clear)
+          /* if clear then set foreground to black */
+          set_xftcolor(st, (unsigned long)0x000000, 0xFFFF);
+       else 
+          xcolor_to_xftcolor(st, &worm_colset[which], 0xFFFF);
+
+       adjust = st->HEIGHT / 2;
+       if (head) 
+       {
+             XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+      			       col * st->WIDTH, row * st->HEIGHT + adjust,
+		               (const FcChar8 *)"^^", 2);
+      	     XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+	                       col * st->WIDTH, 
+			       (row * st->HEIGHT) + adjust + 4,
+		               (const FcChar8 *)"oo", 2); 
+	     XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+		               col * st->WIDTH, 
+			       (row * st->HEIGHT) + (adjust * 2),
+		               (const FcChar8 *)"\u25C0\u25B6", 6);
+       } 
+       else {
+	     XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+      			       col * st->WIDTH, 
+			       row * st->HEIGHT + adjust,
+		               (const FcChar8 *)"\u229a\u229a", 6);
+	     XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+		               col * st->WIDTH, 
+			       (row * st->HEIGHT) + (adjust * 2),
+		               (const FcChar8 *)"<>", 2);
+		               /*(const FcChar8 *)"\u25C0\u25B6", 6);*/
+       }
+       break;
+
+    /* NetWare SMP classic screensaver (squares) */
+    case CLASSIC:
+    default:   
+       XSetForeground(st->dpy, st->gc, st->black[0].pixel);
+       XDrawRectangle(st->dpy, st->b, st->gc, col * st->WIDTH,
+		      row * st->HEIGHT, st->HEIGHT, st->HEIGHT);
+       if (!clear) 
+          XSetForeground (st->dpy, st->gc, worm_colset[which].pixel);
+       XFillRectangle(st->dpy, st->b, st->gc, col * st->WIDTH + 1, 
+		      row * st->HEIGHT + 1, st->HEIGHT - 1, st->HEIGHT - 1);
+       break;
+
+    case BALLS3D:
+
+
+    case CIRCLES:
+       XFillArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
+   	        st->HEIGHT, st->HEIGHT, 0, 360 * 64);
+       break;
+
     case ARROWS:
        XSetLineAttributes(st->dpy, st->gc, 8, LineSolid, CapRound, 
 		          JoinRound);
@@ -520,12 +532,13 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
        break;
 
     case TRIANGLES:
-       XSetLineAttributes(st->dpy, st->gc, 2, LineSolid, CapRound, 
+/*
+       XSetLineAttributes(st->dpy, st->gc, 4, LineSolid, CapRound, 
 		          JoinRound);
 
        XDrawArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
 	        st->HEIGHT, st->HEIGHT, 0, 360 * 64);
-
+*/
        Triangle(st, 
 	         col * st->WIDTH, 
 		 (row * st->HEIGHT) + st->HEIGHT,
@@ -536,75 +549,6 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
 		 direction);
        break;
 
-    /* from the Novell Netware Snipes Network Game */
-    case SNIPES:
-/*
-       if (head) {
-          XDrawString(st->dpy, st->b, st->gc, 
-      			  col * st->WIDTH, row * st->HEIGHT + adjust,
- 		    "^^", 2);
-      	  XDrawString(st->dpy, st->b, st->gc, 
-	            col * st->WIDTH, (row * st->HEIGHT) + adjust + 4,
- 		    "oo", 2); 
-	  XDrawString(st->dpy, st->b, st->gc, 
-		    col * st->WIDTH, (row * st->HEIGHT) + adjust + 
-		                     (st->HEIGHT / 2),
- 		    "<>", 2);
-       } else {
-          XDrawString(st->dpy, st->b, st->gc, 
-	            col * st->WIDTH, row * st->HEIGHT + adjust,
- 		    "00", 2);
-	  XDrawString(st->dpy, st->b, st->gc, 
-		    col * st->WIDTH, (row * st->HEIGHT) + adjust + 
-                     (st->HEIGHT / 2),
- 		    "<>", 2);
-       }
-*/
-       if (head) {
-      	  XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
-      			  col * st->WIDTH, row * st->HEIGHT + adjust,
-		     (const FcChar8 *)"^^", 2);
-      	  XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
-	            col * st->WIDTH, (row * st->HEIGHT) + adjust + 4,
-		     (const FcChar8 *)"oo", 2); 
-      	  XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
-		    col * st->WIDTH, (row * st->HEIGHT) + adjust + 
-		                     (st->HEIGHT / 2),
-		     (const FcChar8 *)"\u25C0\u25B6", 6);
-       } else {
-      	  XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
-	            col * st->WIDTH, row * st->HEIGHT + adjust,
- 		    (const FcChar8 *)"00", 2);
-      	  XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
-		    col * st->WIDTH, (row * st->HEIGHT) + adjust + 
-                     (st->HEIGHT / 2),
-		     (const FcChar8 *)"<>", 2);
-
-       }
-/*
-      	  XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
-		      st->xgwa.width / 2 + 30,
-                      st->xgwa.height / 2 + 60, 
-		     (const FcChar8 *)"\u2588\u2593\u2592\u2591", 12);
-*/	     
-       break;
-
-    case CLASSIC:
-    default:   
-       XSetForeground(st->dpy, st->gc, st->colors[0][0].pixel);
-       XDrawRectangle(st->dpy, st->b, st->gc, col * st->WIDTH,
-		      row * st->HEIGHT, st->HEIGHT, st->HEIGHT);
-       if (!clear) 
-          XSetForeground (st->dpy, st->gc, snake_colset[which].pixel);
-       XFillRectangle(st->dpy, st->b, st->gc, col * st->WIDTH + 1, 
-		      row * st->HEIGHT + 1, st->HEIGHT - 1, st->HEIGHT - 1);
-       break;
-
-    case BALLS3D:
-    case CIRCLES:
-       XFillArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
-   	        st->HEIGHT, st->HEIGHT, 0, 360 * 64);
-       break;
     }
 
     return;
@@ -1041,6 +985,9 @@ static void *netwaresmp_init(Display *dpy, Window window)
     int n, i;
     XColor fg, bg;
     XGCValues gcv;
+    int rgb_black[3]= {
+       0xFFFF, 0xFFFF, 0xFFFF
+    };
 
     st = (STATE *)calloc(1, sizeof(STATE));
     if (!st) {
@@ -1098,10 +1045,11 @@ static void *netwaresmp_init(Display *dpy, Window window)
     if (st->shape == SNIPES) {
        if (!st->charset)
           st->charset = "iso8859-1";
-       XScanFonts(st);
+       XLoadFonts(st);
     }
 
     st->colors = init_colorsets(st);
+    st->black = make_colorset(st, rgb_black, NULL);
     st->COLS = st->xgwa.width / st->WIDTH;
     st->LINES = st->xgwa.height / st->HEIGHT;
 
@@ -1240,17 +1188,19 @@ static void netwaresmp_free(Display *dpy, Window window, void *closure)
         XColor **colset = st->colors;
 	int n = COLORSETS;
 
-        if (st->hascolor)
-   	   XftColorFree(st->dpy, st->visual, st->cmap, &st->color);
 	if (st->draw)
            XftDrawDestroy(st->draw);
+        if (st->hascolor)
+   	   XftColorFree(st->dpy, st->visual, st->cmap, &st->color);
 	if (st->xftfont)
            XftFontClose (st->dpy, st->xftfont);
-        if (st->font)
-           XFreeFont(st->dpy, st->font);
 
-	while (n--)
-                free(colset[n]);
+        if (st->black)
+	   free(st->black);
+	while (n--) {
+           if (colset[n])
+		free(colset[n]);
+	}
 	if (st->colors)
 	   free(st->colors);
 	if (st->worms)
@@ -1264,11 +1214,11 @@ static const char *netwaresmp_defaults [] = {
         ".shape: 0",
         ".mono: False",
         ".background: #000000",
-        ".foreground: #FF0000",
+        ".foreground: #FFFFFF",
         "*delay: 100000",
         "*wormsize: 30",
         "*doubleBuffer: False",
-        /*"*fontCharset: iso8859-1",*/
+        "*fontCharset: iso8859-1",
 #ifdef HAVE_DOUBLE_BUFFER_EXTENSION
         "*useDBE: True",
         "*useDBEClear: True",
