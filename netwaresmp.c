@@ -383,6 +383,7 @@ static int XLoadFonts(STATE *st)
 
     st->scr = DefaultScreen(st->dpy);
     st->cmap = DefaultColormap(st->dpy, st->scr);
+
     st->xftfont = XftFontOpenName(st->dpy, st->scr, pattern);
     if (!st->xftfont) {
         fprintf (stderr, "%s: could not load base font %s\n",
@@ -409,8 +410,8 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
 		       int clear, int direction, int head)
 {
     int which;
-    int adjust;
     XColor *worm_colset;
+    XGlyphInfo extents1, extents2, extents3, extents4, extents5;
 
 #if VERBOSE
     printf("Xfill(%d) direction %d col: %ld row: %ld  COLS: %d LINES: %d\n", 
@@ -468,7 +469,7 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
     switch (st->shape) {
     /* from the Novell Netware Snipes Network Game */
     case SNIPES:
-       if (!st->xftfont)
+       if (!st->xftfont || !st->hascolor || !st->draw)
           break;
        
        if (clear)
@@ -477,31 +478,76 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
        else 
           xcolor_to_xftcolor(st, &worm_colset[which], 0xFFFF);
 
-       adjust = st->HEIGHT / 2;
+       XftTextExtentsUtf8(st->dpy, st->xftfont,
+		         (FcChar8 *) "^^", 2, &extents1);
+       XftTextExtentsUtf8(st->dpy, st->xftfont,
+		         (FcChar8 *) "oo", 2, &extents2);
+       XftTextExtentsUtf8(st->dpy, st->xftfont,
+		         (FcChar8 *) "\u25C0\u25B6", 6, &extents3);
+       XftTextExtentsUtf8(st->dpy, st->xftfont,
+		         (FcChar8 *)"\u229a\u229a", 6, &extents4);
+       XftTextExtentsUtf8(st->dpy, st->xftfont,
+		         (FcChar8 *)"<>", 2, &extents5);
+#if (VERBOSE)
+      printf("H1: height: %d width: %d x: %d y: %d xoff: %d yoff: %d\n", 
+	    extents1.height, extents1.width, extents1.x, 
+	    extents1.y, extents1.xOff, extents1.yOff);
+
+      printf("H2: height: %d width: %d x: %d y: %d xoff: %d yoff: %d\n", 
+	    extents2.height, extents2.width, extents2.x, 
+	    extents2.y, extents2.xOff, extents2.yOff);
+
+      printf("H3: height: %d width: %d x: %d y: %d xoff: %d yoff: %d\n", 
+	    extents3.height, extents3.width, extents3.x, 
+	    extents3.y, extents3.xOff, extents3.yOff);
+
+      printf("B1: height: %d width: %d x: %d y: %d xoff: %d yoff: %d\n", 
+	    extents4.height, extents4.width, extents4.x, 
+	    extents4.y, extents4.xOff, extents4.yOff);
+
+      printf("B2: height: %d width: %d x: %d y: %d xoff: %d yoff: %d\n", 
+	    extents5.height, extents5.width, extents5.x, 
+	    extents5.y, extents5.xOff, extents5.yOff);
+#endif
        if (head) 
        {
-             XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
-      			       col * st->WIDTH, row * st->HEIGHT + adjust,
+	     XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+      			       col * st->WIDTH, 
+			       row * st->HEIGHT + extents1.height + 
+			             (extents1.height / 4),
 		               (const FcChar8 *)"^^", 2);
       	     XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
 	                       col * st->WIDTH, 
-			       (row * st->HEIGHT) + adjust + 4,
+			       (row * st->HEIGHT) + extents1.height + 
+			       (extents1.height / 2),
 		               (const FcChar8 *)"oo", 2); 
 	     XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
 		               col * st->WIDTH, 
-			       (row * st->HEIGHT) + (adjust * 2),
+			       (row * st->HEIGHT) + 
+			       extents1.height + extents2.height,
 		               (const FcChar8 *)"\u25C0\u25B6", 6);
+#if VERBOSE
+	     printf("H Total: %d  1: %d 2: %d 3: %d\n", 
+	            (extents1.height + (extents1.height / 4)) +
+	            (extents1.height + (extents1.height / 2)) +
+	            (extents1.height + extents2.height),
+	            (extents1.height + (extents1.height / 4)),
+	            (extents1.height + (extents1.height / 2)),
+	            (extents1.height + extents2.height));
+#endif
        } 
        else {
 	     XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
       			       col * st->WIDTH, 
-			       row * st->HEIGHT + adjust,
+			       row * st->HEIGHT + extents1.height + 
+			             (extents1.height / 4),
 		               (const FcChar8 *)"\u229a\u229a", 6);
 	     XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
 		               col * st->WIDTH, 
-			       (row * st->HEIGHT) + (adjust * 2),
+			       (row * st->HEIGHT) + 
+			        extents1.height + extents4.height +
+			             (extents1.height / 4),
 		               (const FcChar8 *)"<>", 2);
-		               /*(const FcChar8 *)"\u25C0\u25B6", 6);*/
        }
        break;
 
@@ -548,7 +594,6 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
 	         (row * st->HEIGHT) + st->HEIGHT,
 		 direction);
        break;
-
     }
 
     return;
