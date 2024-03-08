@@ -81,7 +81,9 @@
 #define MAX_MICROSEC  100000
 #define MIN_MICROSEC  10000
 #define COLORSETS     16
+
 #define VERBOSE       0
+#define DEBUG         0
 
 /* worm drawing shapes */
 #define CLASSIC       0
@@ -372,11 +374,48 @@ static void set_xftcolor(STATE *st, unsigned long tcolor, unsigned short alpha)
 
 static int XLoadFonts(STATE *st)
 {
+#if DEBUG
+    char **names = NULL, **names2 = NULL;
+    int count = 0, count2 = 0;
+    XFontStruct *info = 0;
+#endif
+
     char pattern[1024];
     const char *fontname = 
     "DejaVu Sans Mono:pixelsize=%d:antialias=false;style=bold;"; 
+#if DEBUG
+    sprintf (pattern, "-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s",
+             "*",         /* foundry */
+             "*",         /* family */
+             "*",         /* weight */
+             "*",         /* slant */
+             "*",         /* swidth */
+             "*",         /* adstyle */
+             "0",         /* pixel size */
+             "0",         /* point size */
+             "0",         /* resolution x */
+             "0",         /* resolution y */
+             "m",         /* spacing */
+             "0",         /* avg width */
+             "*");        /* registry + encoding */
 
-    sprintf(pattern, fontname, st->HEIGHT);
+    names = XListFonts (st->dpy, pattern, 1000, &count);
+    if (count > 0) {
+#if VERBOSE
+       int i;
+	    
+       for (i=0; i < count; i++) {
+          printf("%s\n", names[i]);
+       }
+#endif
+       names2 = XListFontsWithInfo (st->dpy, names[0], 1000, &count2, &info);
+       if (count2 > 0) 
+          XFreeFontInfo(names2, info, count2);
+       XFreeFontNames(names);
+    }
+#endif
+
+    sprintf(pattern, fontname, st->wormsize);
 #if VERBOSE
     fprintf (stderr, "%s: xft pattern %s\n", progname, pattern);
 #endif
@@ -403,6 +442,14 @@ static int XLoadFonts(STATE *st)
        return 1;
     }
 
+    /* reset height, width, lines, and columns based on font metrics */
+    st->HEIGHT = ((st->xftfont->height + 1) * 2) / 2;
+    st->WIDTH = st->HEIGHT / 2;
+
+    XGetWindowAttributes (st->dpy, st->window, &st->xgwa);
+    st->LINES = st->xgwa.height / st->HEIGHT;
+    st->COLS = st->xgwa.width / st->WIDTH;
+
     return 0;
 }
 
@@ -412,6 +459,10 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
     int which;
     XColor *worm_colset;
     XGlyphInfo extents1, extents2, extents3, extents4, extents5;
+    /* utf8 encoding for \u25C0\u25b6 C99 compliance */ 
+    unsigned char snipes_utf8_1[7] = { 0xE2, 0x97, 0x80, 0xE2, 0x96, 0xB6, 0 }; 
+    /* utf8 encoding for \u229A\u229A C99 compliance */
+    unsigned char snipes_utf8_2[7] = { 0xE2, 0x8A, 0x9A, 0xE2, 0x8A, 0x9A, 0 }; 
 
 #if VERBOSE
     printf("Xfill(%d) direction %d col: %ld row: %ld  COLS: %d LINES: %d\n", 
@@ -471,21 +522,33 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
     case SNIPES:
        if (!st->xftfont || !st->hascolor || !st->draw)
           break;
-       
-       if (clear)
+#if DEBUG       
+       which = st->ncolors >> 1;
+       XSetForeground(st->dpy, st->gc, worm_colset[which].pixel);
+       XDrawRectangle(st->dpy, st->b, st->gc, col * st->WIDTH,
+		      row * st->HEIGHT, st->HEIGHT, st->HEIGHT);
+#endif
+      if (clear)
           /* if clear then set foreground to black */
           set_xftcolor(st, (unsigned long)0x000000, 0xFFFF);
        else 
           xcolor_to_xftcolor(st, &worm_colset[which], 0xFFFF);
 
+#if (VERBOSE)
+       printf("XftFont:  ascent: %d  descent: %d  height: %d H: %d W: %d\n",
+              st->xftfont->ascent, st->xftfont->descent, st->xftfont->height,
+	      st->HEIGHT, st->WIDTH);
+#endif
        XftTextExtentsUtf8(st->dpy, st->xftfont,
 		         (FcChar8 *) "^^", 2, &extents1);
        XftTextExtentsUtf8(st->dpy, st->xftfont,
 		         (FcChar8 *) "oo", 2, &extents2);
        XftTextExtentsUtf8(st->dpy, st->xftfont,
-		         (FcChar8 *) "\u25C0\u25B6", 6, &extents3);
+			 /* \u25C0\u25B6 */
+		         (FcChar8 *)snipes_utf8_1, 6, &extents3);
        XftTextExtentsUtf8(st->dpy, st->xftfont,
-		         (FcChar8 *)"\u229a\u229a", 6, &extents4);
+			 /* \u229a\u229a */
+		         (FcChar8 *)snipes_utf8_2, 6, &extents4);
        XftTextExtentsUtf8(st->dpy, st->xftfont,
 		         (FcChar8 *)"<>", 2, &extents5);
 #if (VERBOSE)
@@ -511,43 +574,60 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
 #endif
        if (head) 
        {
-	     XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
-      			       col * st->WIDTH, 
-			       row * st->HEIGHT + extents1.height + 
-			             (extents1.height / 4),
-		               (const FcChar8 *)"^^", 2);
-      	     XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
-	                       col * st->WIDTH, 
-			       (row * st->HEIGHT) + extents1.height + 
-			       (extents1.height / 2),
-		               (const FcChar8 *)"oo", 2); 
-	     XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
-		               col * st->WIDTH, 
-			       (row * st->HEIGHT) + 
-			       extents1.height + extents2.height,
-		               (const FcChar8 *)"\u25C0\u25B6", 6);
-#if VERBOSE
+          XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+          	            col * st->WIDTH, 
+			    (row * st->HEIGHT) + extents1.height +
+			    extents1.height + (extents1.height / 2),
+	                    (const FcChar8 *)"^^", 2);
+          XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+        	            col * st->WIDTH, 
+			    (row * st->HEIGHT) + 
+                            extents1.height + extents2.height, 
+		            (const FcChar8 *)"oo", 2);
+          XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+        	            col * st->WIDTH, 
+			    (row * st->HEIGHT) + 
+			    extents2.height + extents3.height, 
+			    /* \u25C0\u25B6 */
+		            (const FcChar8 *)snipes_utf8_1, 6);
+#if (VERBOSE)
 	     printf("H Total: %d  1: %d 2: %d 3: %d\n", 
-	            (extents1.height + (extents1.height / 4)) +
-	            (extents1.height + (extents1.height / 2)) +
-	            (extents1.height + extents2.height),
-	            (extents1.height + (extents1.height / 4)),
-	            (extents1.height + (extents1.height / 2)),
-	            (extents1.height + extents2.height));
+			    extents1.height +
+			    extents1.height + (extents1.height / 2) +
+                            extents1.height + extents2.height + 
+			    extents2.height + extents3.height, 
+			    extents1.height +
+			    extents1.height + (extents1.height / 2),
+                            extents1.height + extents2.height, 
+			    extents2.height + extents3.height
+		   );
 #endif
        } 
        else {
-	     XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
-      			       col * st->WIDTH, 
-			       row * st->HEIGHT + extents1.height + 
-			             (extents1.height / 4),
-		               (const FcChar8 *)"\u229a\u229a", 6);
-	     XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
-		               col * st->WIDTH, 
-			       (row * st->HEIGHT) + 
-			        extents1.height + extents4.height +
-			             (extents1.height / 4),
-		               (const FcChar8 *)"<>", 2);
+             XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+          	            col * st->WIDTH, 
+			    (row * st->HEIGHT) + extents1.height +
+			    extents4.height - (extents1.height / 2),
+			    /* \u229a\u229a */
+		            (const FcChar8 *)snipes_utf8_2, 6);
+             XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+        	            col * st->WIDTH, 
+			    (row * st->HEIGHT) + 
+                            extents1.height + extents4.height +
+			    extents5.height - (extents1.height / 2), 
+		            (const FcChar8 *)"<>", 2);
+#if (VERBOSE)
+	     printf("B Total: %d  1: %d 2: %d\n", 
+			    extents1.height +
+			    extents4.height - (extents1.height / 2) +
+                            extents1.height + extents4.height +
+			    extents5.height - (extents1.height / 2), 
+			    extents1.height +
+			    extents4.height - (extents1.height / 2),
+                            extents1.height + extents4.height +
+			    extents5.height - (extents1.height / 2) 
+		    );
+#endif
        }
        break;
 
@@ -885,7 +965,8 @@ static void clear_worm(STATE *st, WORM *s)
     int n;
 
     for (n = s->length_prev - 1; n >= 0; n--) {
-       worm_write(st, ' ', s->y_prev[n], s->x_prev[n], s, 1, s->d_prev[n], n ? 0 : 1);
+       worm_write(st, ' ', s->y_prev[n], s->x_prev[n], s, 1, 
+		  s->d_prev[n], n ? 0 : 1);
     }
 }
 
@@ -1076,21 +1157,23 @@ static void *netwaresmp_init(Display *dpy, Window window)
 
     if (st->wormsize < 10 || st->wormsize > 80)
     {
-       fprintf(stderr, "%s: specified wormsize (%d) must be between 10 and 80, defaulting to 30\n", 
+       fprintf(stderr, "%s: specified wormsize (%d) must be between 10 "
+		       "d 80, defaulting to 30\n", 
 	       progname, st->wormsize);
-       st->HEIGHT = 30;
-       st->WIDTH = st->HEIGHT / 2;
+       st->wormsize = 30;
     }
-    else
-    {
-       st->HEIGHT = st->wormsize;
-       st->WIDTH = st->wormsize / 2;
-    }
+
+    st->HEIGHT = st->wormsize;
+    st->WIDTH = st->wormsize / 2;
 
     if (st->shape == SNIPES) {
        if (!st->charset)
           st->charset = "iso8859-1";
-       XLoadFonts(st);
+       if (XLoadFonts(st)) {
+          free(st);
+          fprintf (stderr, "%s: load fonts failed!\n", progname);
+          exit (1);
+       }
     }
 
     st->colors = init_colorsets(st);
