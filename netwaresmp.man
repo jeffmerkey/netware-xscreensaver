@@ -29,7 +29,14 @@ Draw on the root window.
 If on a color display, pretend we're on a monochrome display.
 .TP 8
 .B \-shape 
-Specify worm drawing mode.  0 for classic (squares), 1 for circles, 2 for snipes (snipes was the first distributed networking game that ran over local area networks. A retro NetWare classic!), 3 for triangles, 4 for 3D balls, and 5 for arrows.
+Specify worm drawing mode:  
+0 for squares, 
+1 for circles, 
+2 for snipes (from the NetWare game "Snipes", the first distributed network game run over a local area network), 
+3 for triangles, 
+4 for classic (retro text-based screensaver from NetWare SMP), 
+5 for arrows
+6 for 3D balls, 
 .TP 8
 .B \-install
 Install a private colormap for the window.

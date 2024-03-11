@@ -21,16 +21,18 @@
   <number id="wormsize" type="spinbutton" arg="--wormsize %"
           _label="Wormsize" low="10" high="80" default="30"/>
 
-  <select id="shape">
-    <option id="classic"  _label="Classic (Squares)" />
-    <option id="circles"  _label="Circles"   arg-set="--shape 1"/>
-    <option id="snipes"   _label="Snipes"    arg-set="--shape 2"/>
-    <option id="triangle" _label="Triangles" arg-set="--shape 3"/>
-    <option id="3dballs"  _label="3D Balls"  arg-set="--shape 4"/>
-    <option id="arrows"   _label="Arrows"    arg-set="--shape 5"/>
+  <select id="shape" >
+    <option id="squares"  _label="Squares Drawing Mode"/>
+    <option id="circles"  _label="Circles Drawing Mode" arg-set="--shape 1"/>
+    <option id="snipes"   _label="Snipes Drawing Mode"  arg-set="--shape 2"/>
+    <option id="triangle" _label="Triangles Drawing Mode" arg-set="--shape 3"/>
+    <option id="classic"  _label="Classic Drawing Mode"  arg-set="--shape 4"/>
+    <option id="arrows"   _label="Arrows Drawing Mode"   arg-set="--shape 5"/>
+    <option id="3dballs"  _label="3DBalls Drawing Mode"  arg-set="--shape 6"/>
   </select>
 
-  <boolean id="mono" _label="Mono Color Mode" arg-set="--mono"/>
+  <boolean id="mono"  _label="Mono Color Mode" arg-set="--mono"/>
+  <boolean id="stats" _label="Select Stats Display Popup" arg-set="--stats"/>
 
   <string id="fg" _label="Foreground color" arg="--fg %" default="#FF0000"/>
   <string id="bg" _label="Background color" arg="--bg %" default="#000000"/>
@@ -39,9 +41,10 @@
   <_description>
 Draws a worm for each system cpu that grows longer and faster as the machine 
 load increases for a particular processor .  A rewrite of the classic Novell 
-Netware SMP console screensaver.  Originally written at Novell for NetWare SMP 
-in 1994 by Jeffrey V. Merkey.  Re-written by Jeffrey Merkey and Cosimo Streppone 
-for xscreensaver based on PopSquares, Deco hacks, loadsnake, and the original 
-Netware SMP screensaver.   
+Netware SMP console screensaver.  
+
+Originally written at Novell for NetWare SMP in 1994 by Jeffrey V. Merkey.  
+Re-written by Jeffrey Merkey and Cosimo Streppone for xscreensaver based 
+on PopSquares, Deco hacks, loadsnake, and the original Netware SMP screensaver; 2024.
   </_description>
 </screensaver>

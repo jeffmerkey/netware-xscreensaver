@@ -86,12 +86,13 @@
 #define DEBUG         0
 
 /* worm drawing shapes */
-#define CLASSIC       0
+#define SQUARES       0
 #define CIRCLES       1
 #define SNIPES        2
 #define TRIANGLES     3
-#define BALLS3D       4
+#define CLASSIC       4
 #define ARROWS        5
+#define BALLS3D       6
 
 /* worm state structure */
 typedef struct _WORM
@@ -148,6 +149,7 @@ typedef struct _STATE
     int divisor;
     int prio;
     int mono;
+    int stats;
     int shape;
     char *charset;
     int sw, sh;
@@ -164,68 +166,18 @@ typedef struct _STATE
     WORM *worms;
 } STATE;
 
-static void Triangle(STATE *st, int x1, int y1, int x2, int y2, 
-	              int x3, int y3, int direction)
-{
-    XPoint points[3];
-    int npoints = 3;
-    int shape = Convex;
-    int mode = CoordModeOrigin;
-
-    points[0].x = (short) x1;
-    points[0].y = (short) y1;
-    points[1].x = (short) x2;
-    points[1].y = (short) y2;
-    points[2].x = (short) x3;
-    points[2].y = (short) y3;
-
-    /* 0=up, 2=right, 4=down, 6=left */
-    switch (direction % 8) {
-       case 0:
-       case 1:
-       case 2:
-       case 3:
-       case 4:
-       case 5:
-       case 6:
-       case 7:
-          break;
-    }
-
-    XFillPolygon(st->dpy, st->b, st->gc,
-                 points, npoints, shape, mode);
-}
-
-static void XArrow(STATE *st, int x, int y, int radius, int direction)
-{
-    XPoint points[3];
-    double th;
-    int radius2;
-    double tick = ((M_PI * 2) / 18) * 2;
-
-    radius *= 0.9;
-    radius *= direction;
-    radius2 = radius - (radius / 8) * 3;
-  
-    th = 2 * M_PI * (1 / ((double) 360*64));
-
-    points[0].x = x + radius * cos(th);		/* tip */
-    points[0].y = y + radius * sin(th);
-
-    points[1].x = x + radius2 * cos(th - tick);	/* tip left */
-    points[1].y = y + radius2 * sin(th - tick);
-
-    points[2].x = x + radius2 * cos(th + tick);	/* tip right */
-    points[2].y = y + radius2 * sin(th + tick);
-
-    XDrawLine (st->dpy, st->b, st->gc,
-              (int) (x + radius2 * cos(th)),
-              (int) (y + radius2 * sin(th)),
-              (int) (x + -radius * cos(th)),
-              (int) (y + -radius * sin(th)));
-
-    XFillPolygon (st->dpy, st->b, st->gc, points, 3, Convex, CoordModeOrigin);
-}
+/* utf8 encoding for \u25C0\u25b6 C89 compliance */ 
+unsigned char snipes_utf8_1[7] = { 0xE2, 0x97, 0x80, 0xE2, 0x96, 0xB6, 0 }; 
+/* utf8 encoding for \u229A\u229A C89 compliance */
+unsigned char snipes_utf8_2[7] = { 0xE2, 0x8A, 0x9A, 0xE2, 0x8A, 0x9A, 0 }; 
+/* utf8 encoding for \u2588\u2588 C89 compliance */
+unsigned char classic_utf8_1[7] = { 0xE2, 0x96, 0x88, 0xE2, 0x96, 0x88, 0 };
+/* utf8 encoding for \u2593\u2593 C89 compliance */
+unsigned char classic_utf8_2[7] = { 0xE2, 0x96, 0x93, 0xE2, 0x96, 0x93, 0 };
+/* utf8 encoding for \u2592\u2592 C89 compliance */
+unsigned char classic_utf8_3[7] = { 0xE2, 0x96, 0x92, 0xE2, 0x96, 0x92, 0 };
+/* utf8 encoding for \u2591\u2591 C89 compliance */
+unsigned char classic_utf8_4[7] = { 0xE2, 0x96, 0x91, 0xE2, 0x96, 0x91, 0 };
 
 static XColor *make_colorset(STATE *st, const int *rgb, const int *rgb_low) 
 {
@@ -383,6 +335,7 @@ static int XLoadFonts(STATE *st)
     char pattern[1024];
     const char *fontname = 
     "DejaVu Sans Mono:pixelsize=%d:antialias=false;style=bold;"; 
+
 #if DEBUG
     sprintf (pattern, "-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s",
              "*",         /* foundry */
@@ -414,8 +367,11 @@ static int XLoadFonts(STATE *st)
        XFreeFontNames(names);
     }
 #endif
-
-    sprintf(pattern, fontname, st->wormsize);
+ 
+    if (st->shape == CLASSIC)
+       sprintf(pattern, fontname, st->wormsize - 4);
+    else
+       sprintf(pattern, fontname, st->wormsize);
 #if VERBOSE
     fprintf (stderr, "%s: xft pattern %s\n", progname, pattern);
 #endif
@@ -449,8 +405,118 @@ static int XLoadFonts(STATE *st)
     XGetWindowAttributes (st->dpy, st->window, &st->xgwa);
     st->LINES = st->xgwa.height / st->HEIGHT;
     st->COLS = st->xgwa.width / st->WIDTH;
-
+    
     return 0;
+}
+
+static void XArrow(STATE *st, int x, int y, int radius, int direction)
+{
+    XPoint points[3];
+    double th;
+    int radius2;
+    double tick = ((M_PI * 2) / 18) * 2;
+
+    radius *= 0.9;
+    radius *= direction;
+    radius2 = radius - (radius / 8) * 3;
+  
+    th = 2 * M_PI * (1 / ((double) 360*64));
+
+    points[0].x = x + radius * cos(th);		/* tip */
+    points[0].y = y + radius * sin(th);
+
+    points[1].x = x + radius2 * cos(th - tick);	/* tip left */
+    points[1].y = y + radius2 * sin(th - tick);
+
+    points[2].x = x + radius2 * cos(th + tick);	/* tip right */
+    points[2].y = y + radius2 * sin(th + tick);
+
+    XDrawLine (st->dpy, st->b, st->gc,
+              (int) (x + radius2 * cos(th)),
+              (int) (y + radius2 * sin(th)),
+              (int) (x + -radius * cos(th)),
+              (int) (y + -radius * sin(th)));
+
+    XFillPolygon (st->dpy, st->b, st->gc, points, 3, Convex, CoordModeOrigin);
+}
+
+static void Triangle(STATE *st, int x, int y, int direction, int c)
+{
+    XPoint points[3];
+    int npoints = 3;
+    int shape = Convex;
+    int mode = CoordModeOrigin;
+    int radius;
+
+    printf("direction: %d\n", direction);
+
+    switch (c) {
+    default:
+    case 0:
+       radius = st->WIDTH - 2;
+       break;
+    case 1:
+       radius = (st->WIDTH * 7) / 8;
+       break;
+    case 2:
+       radius = (st->WIDTH * 6) / 8;
+       break;
+    case 3:
+       radius = (st->WIDTH * 5) / 8;
+       break;
+    }    
+
+    /* 0=down, 1=down-right 2=right, 3=up-right  */ 
+    /* 4=up,   5=up-left    6=left   7-down-left */
+    switch (direction) {
+       default:
+          break;
+       case 0: 
+          points[0].x = (short) x + (radius * cos(M_PI * 2 * 90 / 360));
+          points[0].y = (short) y + (radius * sin(M_PI * 2 * 90 / 360));
+          points[1].x = (short) x + (radius * cos(M_PI * 2 * 210 / 360));
+          points[1].y = (short) y + (radius * sin(M_PI * 2 * 210 / 360));
+          points[2].x = (short) x + (radius * cos(M_PI * 2 * 330 / 360));
+          points[2].y = (short) y + (radius * sin(M_PI * 2 * 330 / 360));
+          XFillPolygon(st->dpy, st->b, st->gc, points, npoints, shape, mode);
+	  break;
+       case 1:
+          break;
+       case 2:
+          points[0].x = (short) x + (radius * cos(M_PI * 2 * 0 / 360));
+          points[0].y = (short) y + (radius * sin(M_PI * 2 * 0 / 360));
+          points[1].x = (short) x + (radius * cos(M_PI * 2 * 120 / 360));
+          points[1].y = (short) y + (radius * sin(M_PI * 2 * 120 / 360));
+          points[2].x = (short) x + (radius * cos(M_PI * 2 * 240 / 360));
+          points[2].y = (short) y + (radius * sin(M_PI * 2 * 240 / 360));
+          XFillPolygon(st->dpy, st->b, st->gc, points, npoints, shape, mode);
+          break;
+       case 3:
+          break;
+       case 4:
+          points[0].x = (short) x + (radius * cos(M_PI * 2 * 270 / 360));
+          points[0].y = (short) y + (radius * sin(M_PI * 2 * 270 / 360));
+          points[1].x = (short) x + (radius * cos(M_PI * 2 * 30 / 360));
+          points[1].y = (short) y + (radius * sin(M_PI * 2 * 30 / 360));
+          points[2].x = (short) x + (radius * cos(M_PI * 2 * 150 / 360));
+          points[2].y = (short) y + (radius * sin(M_PI * 2 * 150 / 360));
+          XFillPolygon(st->dpy, st->b, st->gc, points, npoints, shape, mode);
+          break;
+       case 5:
+          break;
+       case 6:
+          points[0].x = (short) x + (radius * cos(M_PI * 2 * 180 / 360));
+          points[0].y = (short) y + (radius * sin(M_PI * 2 * 180 / 360));
+          points[1].x = (short) x + (radius * cos(M_PI * 2 * 300 / 360));
+          points[1].y = (short) y + (radius * sin(M_PI * 2 * 300 / 360));
+          points[2].x = (short) x + (radius * cos(M_PI * 2 * 60 / 360));
+          points[2].y = (short) y + (radius * sin(M_PI * 2 * 60 / 360));
+          XFillPolygon(st->dpy, st->b, st->gc, points, npoints, shape, mode);
+          break;
+       case 7:
+          break;
+    }
+/*    XFillPolygon(st->dpy, st->b, st->gc, points, npoints, shape, mode);*/
 }
 
 static void worm_write(STATE *st, int c, long row, long col, WORM *s, 
@@ -459,11 +525,6 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
     int which;
     XColor *worm_colset;
     XGlyphInfo extents1, extents2, extents3, extents4, extents5;
-    /* utf8 encoding for \u25C0\u25b6 C99 compliance */ 
-    unsigned char snipes_utf8_1[7] = { 0xE2, 0x97, 0x80, 0xE2, 0x96, 0xB6, 0 }; 
-    /* utf8 encoding for \u229A\u229A C99 compliance */
-    unsigned char snipes_utf8_2[7] = { 0xE2, 0x8A, 0x9A, 0xE2, 0x8A, 0x9A, 0 }; 
-
 #if VERBOSE
     printf("Xfill(%d) direction %d col: %ld row: %ld  COLS: %d LINES: %d\n", 
            s->cpu, direction, col, row, st->COLS, st->LINES);
@@ -518,27 +579,18 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
     }
 
     switch (st->shape) {
+
     /* from the Novell Netware Snipes Network Game */
     case SNIPES:
        if (!st->xftfont || !st->hascolor || !st->draw)
           break;
-#if DEBUG       
-       which = st->ncolors >> 1;
-       XSetForeground(st->dpy, st->gc, worm_colset[which].pixel);
-       XDrawRectangle(st->dpy, st->b, st->gc, col * st->WIDTH,
-		      row * st->HEIGHT, st->HEIGHT, st->HEIGHT);
-#endif
+
+       /* if clear then set foreground to black */
       if (clear)
-          /* if clear then set foreground to black */
           set_xftcolor(st, (unsigned long)0x000000, 0xFFFF);
        else 
           xcolor_to_xftcolor(st, &worm_colset[which], 0xFFFF);
 
-#if (VERBOSE)
-       printf("XftFont:  ascent: %d  descent: %d  height: %d H: %d W: %d\n",
-              st->xftfont->ascent, st->xftfont->descent, st->xftfont->height,
-	      st->HEIGHT, st->WIDTH);
-#endif
        XftTextExtentsUtf8(st->dpy, st->xftfont,
 		         (FcChar8 *) "^^", 2, &extents1);
        XftTextExtentsUtf8(st->dpy, st->xftfont,
@@ -551,27 +603,6 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
 		         (FcChar8 *)snipes_utf8_2, 6, &extents4);
        XftTextExtentsUtf8(st->dpy, st->xftfont,
 		         (FcChar8 *)"<>", 2, &extents5);
-#if (VERBOSE)
-      printf("H1: height: %d width: %d x: %d y: %d xoff: %d yoff: %d\n", 
-	    extents1.height, extents1.width, extents1.x, 
-	    extents1.y, extents1.xOff, extents1.yOff);
-
-      printf("H2: height: %d width: %d x: %d y: %d xoff: %d yoff: %d\n", 
-	    extents2.height, extents2.width, extents2.x, 
-	    extents2.y, extents2.xOff, extents2.yOff);
-
-      printf("H3: height: %d width: %d x: %d y: %d xoff: %d yoff: %d\n", 
-	    extents3.height, extents3.width, extents3.x, 
-	    extents3.y, extents3.xOff, extents3.yOff);
-
-      printf("B1: height: %d width: %d x: %d y: %d xoff: %d yoff: %d\n", 
-	    extents4.height, extents4.width, extents4.x, 
-	    extents4.y, extents4.xOff, extents4.yOff);
-
-      printf("B2: height: %d width: %d x: %d y: %d xoff: %d yoff: %d\n", 
-	    extents5.height, extents5.width, extents5.x, 
-	    extents5.y, extents5.xOff, extents5.yOff);
-#endif
        if (head) 
        {
           XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
@@ -588,52 +619,98 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
         	            col * st->WIDTH, 
 			    (row * st->HEIGHT) + 
 			    extents2.height + extents3.height, 
-			    /* \u25C0\u25B6 */
 		            (const FcChar8 *)snipes_utf8_1, 6);
-#if (VERBOSE)
-	     printf("H Total: %d  1: %d 2: %d 3: %d\n", 
-			    extents1.height +
-			    extents1.height + (extents1.height / 2) +
-                            extents1.height + extents2.height + 
-			    extents2.height + extents3.height, 
-			    extents1.height +
-			    extents1.height + (extents1.height / 2),
-                            extents1.height + extents2.height, 
-			    extents2.height + extents3.height
-		   );
-#endif
        } 
        else {
-             XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+          XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
           	            col * st->WIDTH, 
 			    (row * st->HEIGHT) + extents1.height +
 			    extents4.height - (extents1.height / 2),
-			    /* \u229a\u229a */
 		            (const FcChar8 *)snipes_utf8_2, 6);
-             XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+          XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
         	            col * st->WIDTH, 
 			    (row * st->HEIGHT) + 
                             extents1.height + extents4.height +
 			    extents5.height - (extents1.height / 2), 
 		            (const FcChar8 *)"<>", 2);
-#if (VERBOSE)
-	     printf("B Total: %d  1: %d 2: %d\n", 
-			    extents1.height +
-			    extents4.height - (extents1.height / 2) +
-                            extents1.height + extents4.height +
-			    extents5.height - (extents1.height / 2), 
-			    extents1.height +
-			    extents4.height - (extents1.height / 2),
-                            extents1.height + extents4.height +
-			    extents5.height - (extents1.height / 2) 
-		    );
-#endif
        }
        break;
 
-    /* NetWare SMP classic screensaver (squares) */
+    /* NetWare SMP classic screensaver */
     case CLASSIC:
-    default:   
+       if (!st->xftfont || !st->hascolor || !st->draw)
+          break;
+
+       XftTextExtentsUtf8(st->dpy, st->xftfont,
+		         (FcChar8 *)classic_utf8_1, 6, &extents1);
+       XftTextExtentsUtf8(st->dpy, st->xftfont,
+		         (FcChar8 *)classic_utf8_2, 6, &extents2);
+       XftTextExtentsUtf8(st->dpy, st->xftfont,
+		         (FcChar8 *)classic_utf8_3, 6, &extents3);
+       XftTextExtentsUtf8(st->dpy, st->xftfont,
+		         (FcChar8 *)classic_utf8_4, 6, &extents4);
+
+       /* if clear then set foreground to black */
+       if (clear) {
+          set_xftcolor(st, (unsigned long)0x000000, 0xFFFF);
+	  XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+			    col * st->WIDTH, (row * st->HEIGHT) +
+			    extents1.height,
+	                    (const FcChar8 *)classic_utf8_1, 6);
+       } 
+       else {	       
+          xcolor_to_xftcolor(st, &worm_colset[which], 0xFFFF);
+	  switch (c) {
+          case 0:
+             XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+                               col * st->WIDTH, (row * st->HEIGHT) +
+			       extents1.height,
+	                      (const FcChar8 *)classic_utf8_1, 3);
+             XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+                               col * st->WIDTH + st->WIDTH, 
+			       (row * st->HEIGHT) +
+			       extents1.height,
+	                      (const FcChar8 *)classic_utf8_1, 3);
+             break;
+          case 1:
+             XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+                               col * st->WIDTH, (row * st->HEIGHT) +
+			       extents1.height,
+	                      (const FcChar8 *)classic_utf8_1, 3);
+             XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+                               col * st->WIDTH + st->WIDTH, 
+			       (row * st->HEIGHT) +
+			       extents1.height,
+	                      (const FcChar8 *)classic_utf8_1, 3);
+             break;
+          case 2:
+             XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+                               col * st->WIDTH, (row * st->HEIGHT) +
+			       extents1.height,
+	                      (const FcChar8 *)classic_utf8_1, 3);
+             XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+                               col * st->WIDTH + st->WIDTH, 
+			       (row * st->HEIGHT) +
+			       extents1.height,
+	                      (const FcChar8 *)classic_utf8_1, 3);
+             break;
+          case 3:
+             XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+                               col * st->WIDTH, (row * st->HEIGHT) +
+			       extents1.height,
+	                      (const FcChar8 *)classic_utf8_1, 3);
+             XftDrawStringUtf8(st->draw, &st->color, st->xftfont, 
+                               col * st->WIDTH + st->WIDTH, 
+			       (row * st->HEIGHT) +
+			       extents1.height,
+	                      (const FcChar8 *)classic_utf8_1, 3);
+             break;
+          }
+       }
+       break;
+
+    default:
+    case SQUARES:
        XSetForeground(st->dpy, st->gc, st->black[0].pixel);
        XDrawRectangle(st->dpy, st->b, st->gc, col * st->WIDTH,
 		      row * st->HEIGHT, st->HEIGHT, st->HEIGHT);
@@ -658,21 +735,18 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
        break;
 
     case TRIANGLES:
-/*
-       XSetLineAttributes(st->dpy, st->gc, 4, LineSolid, CapRound, 
-		          JoinRound);
+       if (clear) 
+          XFillArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
+      	           st->HEIGHT, st->HEIGHT, 0, 360 * 64);
 
+       XSetLineAttributes(st->dpy, st->gc, 
+	                 (st->HEIGHT / 10) ? (st->HEIGHT / 10) : 1, 
+		         LineSolid, CapRound, JoinRound);
        XDrawArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
 	        st->HEIGHT, st->HEIGHT, 0, 360 * 64);
-*/
-       Triangle(st, 
-	         col * st->WIDTH, 
-		 (row * st->HEIGHT) + st->HEIGHT,
-		 (col * st->WIDTH) + (st->HEIGHT / 2), 
-		 row * st->HEIGHT,
-		 (col * st->WIDTH) + st->HEIGHT, 
-	         (row * st->HEIGHT) + st->HEIGHT,
-		 direction);
+
+       Triangle(st, (col * st->WIDTH) + st->WIDTH, 
+	        (row * st->HEIGHT) + st->HEIGHT / 2, direction, c);
        break;
     }
 
@@ -682,6 +756,7 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
 static int get_processors(void)
 {
     int cpus = 0;
+
     cpus = sysconf(_SC_NPROCESSORS_ONLN);
     if (cpus < 1)
         cpus = 1;
@@ -841,7 +916,6 @@ static void move_worm(STATE *st, WORM *s)
     /* and direction */
     dir = s->direction;
 
-    /* 0=up, 2=right, 4=down, 6=left */
     switch(dir)
     {
         case 0: y++;      break;
@@ -898,7 +972,10 @@ static void move_worm(STATE *st, WORM *s)
     if (dir < 0)
         dir = -dir;
     dir = dir % 8;
-
+#if DEBUG
+    if (dir > 7 || dir < 0)
+	    printf("move worm direction was %d\n", dir);
+#endif
     s->direction = dir;
 
     /* Copy x,y coords in "tail" positions */
@@ -1131,6 +1208,7 @@ static void *netwaresmp_init(Display *dpy, Window window)
     st->ncolors = 16;
     st->dbuf = get_boolean_resource(st->dpy, "doubleBuffer", "Boolean");
     st->mono = get_boolean_resource (st->dpy, "mono", "Boolean");
+    st->stats = get_boolean_resource (st->dpy, "stats", "Boolean");
     st->shape = get_integer_resource (st->dpy, "shape", "Integer");
     st->charset = get_string_resource (dpy, "fontCharset", "FontCharset");
 
@@ -1166,7 +1244,9 @@ static void *netwaresmp_init(Display *dpy, Window window)
     st->HEIGHT = st->wormsize;
     st->WIDTH = st->wormsize / 2;
 
-    if (st->shape == SNIPES) {
+    switch (st->shape) {
+    case SNIPES:
+    case CLASSIC:
        if (!st->charset)
           st->charset = "iso8859-1";
        if (XLoadFonts(st)) {
@@ -1174,6 +1254,9 @@ static void *netwaresmp_init(Display *dpy, Window window)
           fprintf (stderr, "%s: load fonts failed!\n", progname);
           exit (1);
        }
+       break;
+    default:
+       break;
     }
 
     st->colors = init_colorsets(st);
@@ -1225,12 +1308,16 @@ static void *netwaresmp_init(Display *dpy, Window window)
 	s->cpu  = n;
         s->x[0] = random() % (st->COLS - 1);
 	s->y[0] = random() % st->LINES;
-	s->direction = ((random() % 9) >> 1) << 1;
+	s->direction = (((random() % 9) >> 1) << 1) % 8;
 	for (i=1; i < WORM_MAX_LEN; i++)
 	{
            s->x[i] = s->x[0];
            s->y[i] = s->y[0];
            s->d[i] = s->direction;
+#if DEBUG
+	   if (s->direction > 7 || s->direction < 0)
+	       printf("init move worm direction was %d\n", s->direction);
+#endif
 	}
 	s->length = WORM_MIN_LEN;
         s->runlength = WORM_MIN_LEN;
@@ -1341,6 +1428,7 @@ static const char *netwaresmp_defaults [] = {
         ".speedup: 1",
         ".shape: 0",
         ".mono: False",
+        ".stats: False",
         ".background: #000000",
         ".foreground: #FFFFFF",
         "*delay: 100000",
@@ -1363,6 +1451,7 @@ static XrmOptionDescRec netwaresmp_options [] = {
         { "-delay",   ".delay", XrmoptionSepArg, 0 },
         { "-wormsize",".wormsize", XrmoptionSepArg, 0 },
         { "-mono",    ".mono", XrmoptionNoArg, "True" },
+        { "-stats",   ".stats", XrmoptionNoArg, "True" },
         { "-db",      ".doubleBuffer", XrmoptionNoArg, "True" },
         { "-no-db",   ".doubleBuffer", XrmoptionNoArg, "False" },
         { 0, 0, 0, 0 }
