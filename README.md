@@ -161,8 +161,15 @@ _netwaresmp_ accepts the following options:
   Draw on the root window.
 * **--mono**  
   If on a color display, pretend we're on a monochrome display.
-* **--circles**  
-  Use circles instead of squares to create the worms.
+* **--shape**  
+  Specify worm drawing mode:  
+  0 for squares, 
+  1 for circles, 
+  2 for snipes (from the NetWare game "Snipes", the first distributed network game run over a local area network), 
+  3 for triangles, 
+  4 for classic (retro text-based screensaver from NetWare SMP), 
+  5 for arrows
+  6 for 3D balls, 
 * **--install**  
   Install a private colormap for the window.
 * **--visual _visual_**  
