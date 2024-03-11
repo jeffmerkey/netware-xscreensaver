@@ -42,13 +42,13 @@ For example, the release v6.08-4 contains the following packages in the release 
 
 ### **RPM Based Packages (RedHat, CentOS, SuSe)**
 
-- [xscreensaver-netwaresmp-6.08-5.src.rpm](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-4/xscreensaver-netwaresmp-6.08-5.src.rpm)
-- [xscreensaver-netwaresmp-6.08-5.x86_64.rpm](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-4/xscreensaver-netwaresmp-6.08-5.x86_64.rpm)
+- [xscreensaver-netwaresmp-6.08-5.src.rpm](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-5/xscreensaver-netwaresmp-6.08-5.src.rpm)
+- [xscreensaver-netwaresmp-6.08-5.x86_64.rpm](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-5/xscreensaver-netwaresmp-6.08-5.x86_64.rpm)
 
 ### **Debian Based Packages (Debian, Ubuntu)**
 
-- [xscreensaver-netwaresmp-1.6.08-5.sdeb](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-4/xscreensaver-netwaresmp-1.6.08-5.sdeb)
-- [xscreensaver_netwaresmp_1.6.08-5_amd64.deb](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-4/xscreensaver_netwaresmp_1.6.08-5_amd64.deb)
+- [xscreensaver-netwaresmp-1.6.08-5.sdeb](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-5/xscreensaver-netwaresmp-1.6.08-5.sdeb)
+- [xscreensaver_netwaresmp_1.6.08-5_amd64.deb](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-5/xscreensaver_netwaresmp_1.6.08-5_amd64.deb)
 
 ### **Removing a Previous Installation of Outdated Versions of XScreensaver**
 
@@ -86,7 +86,7 @@ apt-get autoremove xscreensaver
 
 To install the binary package with the RPM package manager:
 ```sh
-rpm -i xscreensaver-netwaresmp-6.08-4.x86_64.rpm
+rpm -i xscreensaver-netwaresmp-6.08-5.x86_64.rpm
 ```
 
 To deinstall the RPM binary package:
@@ -96,7 +96,7 @@ rpm -e xscreensaver-netwaresmp
 
 To install the binary package with the Debian dpkg package manager for amd64:
 ```sh
-dpkg -i xscreensaver_netwaresmp_1.6.08-4_amd64.deb
+dpkg -i xscreensaver_netwaresmp_1.6.08-5_amd64.deb
 ```
 
 To deinstall the Debian dpkg binary package:
@@ -108,7 +108,7 @@ dpkg -r xscreensaver_netwaresmp
 
 To install the source package with the RPM package manager:
 ```sh
-rpm -i xscreensaver-netwaresmp-6.08-4.src.rpm
+rpm -i xscreensaver-netwaresmp-6.08-5.src.rpm
 ```
 
 *(Note: rpm installs the source code files in /root/rpmbuild/ as top directory for RedHat and CentOS
@@ -116,7 +116,7 @@ platforms.  SuSe platforms install the source code files in /usr/src/packages/)*
 
 To install the source package with the Debbuild package tool:
 ```sh
-debbuild -i xscreensaver-netwaresmp-1.6.08-4.sdeb
+debbuild -i xscreensaver-netwaresmp-1.6.08-5.sdeb
 ```
 *(Note: Debbuild installs the source code files in /root/debbuild/ as top directory)*
 
