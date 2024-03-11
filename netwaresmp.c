@@ -446,77 +446,40 @@ static void Triangle(STATE *st, int x, int y, int direction, int c)
     int npoints = 3;
     int shape = Convex;
     int mode = CoordModeOrigin;
-    int radius;
-
-    printf("direction: %d\n", direction);
+    int radius, d = -1;
 
     switch (c) {
-    default:
-    case 0:
-       radius = st->WIDTH - 2;
-       break;
-    case 1:
-       radius = (st->WIDTH * 7) / 8;
-       break;
-    case 2:
-       radius = (st->WIDTH * 6) / 8;
-       break;
-    case 3:
-       radius = (st->WIDTH * 5) / 8;
-       break;
+       default:
+       case 0: radius = (st->WIDTH * 7) / 8; break;
+       case 1: radius = (st->WIDTH * 6) / 8; break;
+       case 2: radius = (st->WIDTH * 5) / 8; break;
+       case 3: radius = (st->WIDTH * 4) / 8; break;
     }    
 
     /* 0=down, 1=down-right 2=right, 3=up-right  */ 
     /* 4=up,   5=up-left    6=left   7-down-left */
     switch (direction) {
-       default:
-          break;
-       case 0: 
-          points[0].x = (short) x + (radius * cos(M_PI * 2 * 90 / 360));
-          points[0].y = (short) y + (radius * sin(M_PI * 2 * 90 / 360));
-          points[1].x = (short) x + (radius * cos(M_PI * 2 * 210 / 360));
-          points[1].y = (short) y + (radius * sin(M_PI * 2 * 210 / 360));
-          points[2].x = (short) x + (radius * cos(M_PI * 2 * 330 / 360));
-          points[2].y = (short) y + (radius * sin(M_PI * 2 * 330 / 360));
-          XFillPolygon(st->dpy, st->b, st->gc, points, npoints, shape, mode);
-	  break;
-       case 1:
-          break;
-       case 2:
-          points[0].x = (short) x + (radius * cos(M_PI * 2 * 0 / 360));
-          points[0].y = (short) y + (radius * sin(M_PI * 2 * 0 / 360));
-          points[1].x = (short) x + (radius * cos(M_PI * 2 * 120 / 360));
-          points[1].y = (short) y + (radius * sin(M_PI * 2 * 120 / 360));
-          points[2].x = (short) x + (radius * cos(M_PI * 2 * 240 / 360));
-          points[2].y = (short) y + (radius * sin(M_PI * 2 * 240 / 360));
-          XFillPolygon(st->dpy, st->b, st->gc, points, npoints, shape, mode);
-          break;
-       case 3:
-          break;
-       case 4:
-          points[0].x = (short) x + (radius * cos(M_PI * 2 * 270 / 360));
-          points[0].y = (short) y + (radius * sin(M_PI * 2 * 270 / 360));
-          points[1].x = (short) x + (radius * cos(M_PI * 2 * 30 / 360));
-          points[1].y = (short) y + (radius * sin(M_PI * 2 * 30 / 360));
-          points[2].x = (short) x + (radius * cos(M_PI * 2 * 150 / 360));
-          points[2].y = (short) y + (radius * sin(M_PI * 2 * 150 / 360));
-          XFillPolygon(st->dpy, st->b, st->gc, points, npoints, shape, mode);
-          break;
-       case 5:
-          break;
-       case 6:
-          points[0].x = (short) x + (radius * cos(M_PI * 2 * 180 / 360));
-          points[0].y = (short) y + (radius * sin(M_PI * 2 * 180 / 360));
-          points[1].x = (short) x + (radius * cos(M_PI * 2 * 300 / 360));
-          points[1].y = (short) y + (radius * sin(M_PI * 2 * 300 / 360));
-          points[2].x = (short) x + (radius * cos(M_PI * 2 * 60 / 360));
-          points[2].y = (short) y + (radius * sin(M_PI * 2 * 60 / 360));
-          XFillPolygon(st->dpy, st->b, st->gc, points, npoints, shape, mode);
-          break;
-       case 7:
-          break;
+       default: return;
+       case 0: d = 270; break;
+       case 1: d = 300; break;
+       case 2: d = 0;   break;
+       case 3: d = 60;  break;
+       case 4: d = 90;  break;
+       case 5: d = 120; break;
+       case 6: d = 180; break;
+       case 7: d = 240; break;
     }
-/*    XFillPolygon(st->dpy, st->b, st->gc, points, npoints, shape, mode);*/
+
+    /* convert from unit circle x,y coordinates to screen x,y coordinates by
+     * making sin equal to abs -[sin]. */
+    points[0].x = (short) x +  (radius * cos(M_PI * 2 * (d % 360 ) / 360));
+    points[0].y = (short) y + -(radius * sin(M_PI * 2 * (d % 360 ) / 360));
+    points[1].x = (short) x +  (radius * cos(M_PI * 2 * ((d + 120) % 360) / 360));
+    points[1].y = (short) y + -(radius * sin(M_PI * 2 * ((d + 120) % 360) / 360));
+    points[2].x = (short) x +  (radius * cos(M_PI * 2 * ((d + 240) % 360) / 360));
+    points[2].y = (short) y + -(radius * sin(M_PI * 2 * ((d + 240) % 360) / 360));
+    XFillPolygon(st->dpy, st->b, st->gc, points, npoints, shape, mode);
+
 }
 
 static void worm_write(STATE *st, int c, long row, long col, WORM *s, 
@@ -721,7 +684,7 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
        break;
 
     case BALLS3D:
-
+       break;
 
     case CIRCLES:
        XFillArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
@@ -738,13 +701,11 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
        if (clear) 
           XFillArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
       	           st->HEIGHT, st->HEIGHT, 0, 360 * 64);
-
        XSetLineAttributes(st->dpy, st->gc, 
 	                 (st->HEIGHT / 10) ? (st->HEIGHT / 10) : 1, 
 		         LineSolid, CapRound, JoinRound);
        XDrawArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
 	        st->HEIGHT, st->HEIGHT, 0, 360 * 64);
-
        Triangle(st, (col * st->WIDTH) + st->WIDTH, 
 	        (row * st->HEIGHT) + st->HEIGHT / 2, direction, c);
        break;
