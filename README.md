@@ -195,7 +195,7 @@ Most Linux distributions use an outdated xscreensaver program which lacks curren
 ### Installing the xscreensaver-6.08 Code Base
 
 You can clone the screensaver-6.08-netwaresmp code base from github as follows using
-the 'git clone' command, or you can download the xscreensaver-6.08-netwaresmp-6.08-4.tar.gz
+the 'git clone' command, or you can download the xscreensaver-6.08-netwaresmp-6.08-5.tar.gz
 archive directly from github, then untar and extract the files.
 
 #### Cloning from Github
@@ -221,7 +221,7 @@ Resolving deltas: 100% (796/796), done.
 You can also download the xscreensaver-6.08-netwaresmp-6.08-4.tar.gz archive directly
 from github from the releases section for the xscreensaver-6.08-netwaresmp code base:
 
-- [xscreensaver-6.08-netwaresmp-6.08-5.tar.gz](https://github.com/jeffmerkey/xscreensaver-6.08-netwaresmp/archive/refs/tags/v6.08-5.tar.gz) 
+- [xscreensaver-6.08-netwaresmp-6.08-5.tar.gz](https://github.com/jeffmerkey/netware-xscreensaver/archive/refs/tags/v6.08-5.tar.gz)
 
 After you download the code base, untar the package into a directory:
 

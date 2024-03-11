@@ -273,7 +273,7 @@ Installing the xscreensaver-6.08 Code Base
 
 You can clone the screensaver-6.08-netwaresmp code base from github as
 follows using the ‘git clone’ command, or you can download the
-xscreensaver-6.08-netwaresmp-6.08-4.tar.gz archive directly from github,
+xscreensaver-6.08-netwaresmp-6.08-5.tar.gz archive directly from github,
 then untar and extract the files.
 
 Cloning from Github
