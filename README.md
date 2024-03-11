@@ -441,15 +441,13 @@ Copyright © 1994-2024 by Jamie Zawinski, Jeffrey Merkey, Cosimo Streppone,
 and others.  Permission to use, copy, modify, distribute, and sell this software
 and its documentation for any purpose is hereby granted without fee, provided 
 that the above copyright notice appear in all copies and that both that 
-copyright notice and this permission notice appear in supporting documentation. No representations are made about the suitability of this software for any 
+copyright notice and this permission notice appear in supporting documentation. 
+No representations are made about the suitability of this software for any 
 purpose.  It is provided "as is" without express or implied warranty.
 
 ## **Authors**
 
-Jeffrey Merkey &lt;[jeffmerkey@gmail.com](mailto:jeffmerkey@gmail.com)&gt; and Cosimo Streppone &lt;cosimo@cpan.org&gt;, 
-based on PopSquares, Deco hacks, loadsnake, and Novell's Netware SMP.  The 
-original Netware SMP screensaver was written by Jeffrey Merkey at Novell in
-1994.  
+Jeffrey Merkey &lt;[jeffmerkey@gmail.com](mailto:jeffmerkey@gmail.com)&gt;, Cosimo Streppone &lt;[cosimo@cpan.org](mailto:cosimo@cpan.org)&gt; and Jamie Zawinski &lt;[jwz@jwz.org](mailto:jwz@jwz.org)&gt; based on PopSquares, Deco hacks, loadsnake, and Novell's Netware SMP.  The original Netware SMP screensaver was written by Jeffrey Merkey at Novell in 1994.  
 
 ## **Issues / problems / help**
 

@@ -540,10 +540,10 @@ about the suitability of this software for any purpose. It is provided
 
 AUTHORS
 
-Jeffrey Merkey <jeffmerkey@gmail.com> and Cosimo Streppone
-<cosimo@cpan.org>, based on PopSquares, Deco hacks, loadsnake, and
-Novell’s Netware SMP. The original Netware SMP screensaver was written
-by Jeffrey Merkey at Novell in 1994.
+Jeffrey Merkey <jeffmerkey@gmail.com>, Cosimo Streppone
+<cosimo@cpan.org> and Jamie Zawinski <jwz@jwz.org> based on PopSquares,
+Deco hacks, loadsnake, and Novell’s Netware SMP. The original Netware
+SMP screensaver was written by Jeffrey Merkey at Novell in 1994.
 
 
 ISSUES / PROBLEMS / HELP

@@ -4,6 +4,7 @@
 *
 *   Portions adapted from xscreensaver loadsnake program is
 *   portions Copyright (c) 2007-2011 Cosimo Streppone <cosimo@cpan.org>
+*   Portions adapted from XScreensaver Copyright (c) 2024 Jamie Zawinski <jwz@jwz.org>
 *
 *   Licensed under the MIT/X License
 *
