@@ -7,7 +7,7 @@
 Summary:	X screen saver and locker
 Name:		%{name}
 Version:	%{version}
-Release:	4
+Release:	5
 Epoch:		1
 License:	BSD
 Group:		Amusements/Graphics
