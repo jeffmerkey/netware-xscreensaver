@@ -207,7 +207,7 @@ git clone https://github.com/jeffmerkey/xscreensaver-6.08-netwaresmp
 After running the 'git clone' command, you should see something similiar to:
 
 ```sh
-Cloning into 'xscreensaver-6.08-netwaresmp'...
+Cloning into xscreensaver-6.08-netwaresmp ...
 remote: Enumerating objects: 2199, done.
 remote: Counting objects: 100% (2199/2199), done.
 remote: Compressing objects: 100% (1366/1366), done.
@@ -321,7 +321,7 @@ Now run autoreconf to re-create the Makefiles and Configuration scripts:
 You should see the followning output if autoreconf completed successfully:
 
 ```sh
-autoreconf: Entering directory `.'
+autoreconf: Entering directory `.
 autoreconf: configure.ac: not using Gettext
 autoreconf: running: aclocal --force 
 autoreconf: configure.ac: tracing
@@ -330,7 +330,7 @@ autoreconf: configure.ac: not using Libtool
 autoreconf: running: /usr/bin/autoconf --force
 autoreconf: running: /usr/bin/autoheader --force
 autoreconf: configure.ac: not using Automake
-autoreconf: Leaving directory `.'
+autoreconf: Leaving directory `.
 [root@localhost xscreensaver-6.08-netwaresmp]# 
 ```
 Now type 'configure' and then type 'make' to build the  xscreensaver-netwaresmp-6.08 package.  If the make process succeeds, then perform 'make install' to install the xscreensaver package to your system:
