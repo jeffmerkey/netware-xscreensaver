@@ -142,7 +142,7 @@ You can download other versions of XScreensaver, including the most recent versi
 ```
 netwaresmp [-cpus  number of cpus] [-speedup  divisor] [-wormsize  pixels] 
 [-display host:display.screen] [-foreground color] [-background color] 
-[-window] [-root] [-mono] [-circles] [-install] [-visual visual]
+[-window] [-root] [-mono] [-shape <0-6>] [-install] [-visual visual]
 ```
 
 ## **Command Line Options**

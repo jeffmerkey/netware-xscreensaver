@@ -177,7 +177,7 @@ _NETWARESMP_ OPTIONS
 
     netwaresmp [-cpus  number of cpus] [-speedup  divisor] [-wormsize  pixels] 
     [-display host:display.screen] [-foreground color] [-background color] 
-    [-window] [-root] [-mono] [-circles] [-install] [-visual visual]
+    [-window] [-root] [-mono] [-shape <0-6>] [-install] [-visual visual]
 
 
 COMMAND LINE OPTIONS
