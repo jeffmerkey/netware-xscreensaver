@@ -125,7 +125,7 @@ For building or rebuilding RPMS or DEB Packages after you have installed the ass
 - [Building the Screensaver as an RPM Package (Redhat/CentOS/SuSe)](#building-as-an-rpm-package)
 - [Building the Screensaver as a Debian Package (Debian/Ubuntu)](#building-as-a-debian-package)
 
-## **Configuring XScreensaver**
+## **Configuring XScreensaver and Obtaining Older Versions**
 
 For detailed instructions on how to install and configure the XScreensaver base program, please refer to the online 
 [Documentation and Manuals for XScreensaver](https://www.jwz.org/xscreensaver/man1.html).  You should also review 
@@ -136,6 +136,8 @@ You can report any bugs you encounter regarding the XScreensaver program and uti
 ).
 
 You can download other versions of XScreensaver, including the most recent versions at the [XScreensaver Download Page](https://www.jwz.org/xscreensaver/download.html).
+
+There are several online archives of XScreensaver releases which contain both current and older released versions of the software.  [Open Source Labs](https://ftp2.osuosl.org/pub/blfs/conglomeration/xscreensaver/) publishes a mirror of [XScreensaver versions](https://ftp2.osuosl.org/pub/blfs/conglomeration/xscreensaver/).
 
 ## **_netwaresmp_ Options**
 

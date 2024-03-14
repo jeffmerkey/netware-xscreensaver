@@ -156,7 +156,7 @@ the associated source packages on your platform, refer to the following:
 -   Building the Screensaver as a Debian Package (Debian/Ubuntu)
 
 
-CONFIGURING XSCREENSAVER
+CONFIGURING XSCREENSAVER AND OBTAINING OLDER VERSIONS
 
 For detailed instructions on how to install and configure the
 XScreensaver base program, please refer to the online Documentation and
@@ -171,6 +171,10 @@ website at www.jwz.org.
 
 You can download other versions of XScreensaver, including the most
 recent versions at the XScreensaver Download Page.
+
+There are several online archives of XScreensaver releases which contain
+both current and older released versions of the software. Open Source
+Labs publishes a mirror of XScreensaver versions.
 
 
 _NETWARESMP_ OPTIONS
