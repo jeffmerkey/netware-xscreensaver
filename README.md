@@ -38,17 +38,17 @@ binary installation and Source RPM packages (SRPMS) and Debbuild SDEB packages f
 RPM and DEB packages for each release include a binary architecture specific package
 and a source package which can be downloaded and built/rebuilt and which contains the source code.
 
-For example, the release v6.08-5 contains the following packages in the release section:
+For example, the release v6.08-6 contains the following packages in the release section:
 
 ### **RPM Based Packages (RedHat, CentOS, SuSe)**
 
-- [xscreensaver-netwaresmp-6.08-5.src.rpm](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-5/xscreensaver-netwaresmp-6.08-5.src.rpm)
-- [xscreensaver-netwaresmp-6.08-5.x86_64.rpm](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-5/xscreensaver-netwaresmp-6.08-5.x86_64.rpm)
+- [xscreensaver-netwaresmp-6.08-6.src.rpm](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-6/xscreensaver-netwaresmp-6.08-6.src.rpm)
+- [xscreensaver-netwaresmp-6.08-6.x86_64.rpm](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-6/xscreensaver-netwaresmp-6.08-6.x86_64.rpm)
 
 ### **Debian Based Packages (Debian, Ubuntu)**
 
-- [xscreensaver-netwaresmp-1.6.08-5.sdeb](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-5/xscreensaver-netwaresmp-1.6.08-5.sdeb)
-- [xscreensaver_netwaresmp_1.6.08-5_amd64.deb](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-5/xscreensaver_netwaresmp_1.6.08-5_amd64.deb)
+- [xscreensaver-netwaresmp-1.6.08-6.sdeb](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-6/xscreensaver-netwaresmp-1.6.08-6.sdeb)
+- [xscreensaver_netwaresmp_1.6.08-6_amd64.deb](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.08-6/xscreensaver_netwaresmp_1.6.08-6_amd64.deb)
 
 ### **Removing a Previous Installation of Outdated Versions of XScreensaver**
 
@@ -86,7 +86,7 @@ apt-get autoremove xscreensaver
 
 To install the binary package with the RPM package manager:
 ```sh
-rpm -i xscreensaver-netwaresmp-6.08-5.x86_64.rpm
+rpm -i xscreensaver-netwaresmp-6.08-6.x86_64.rpm
 ```
 
 To deinstall the RPM binary package:
@@ -96,7 +96,7 @@ rpm -e xscreensaver-netwaresmp
 
 To install the binary package with the Debian dpkg package manager for amd64:
 ```sh
-dpkg -i xscreensaver_netwaresmp_1.6.08-5_amd64.deb
+dpkg -i xscreensaver_netwaresmp_1.6.08-6_amd64.deb
 ```
 
 To deinstall the Debian dpkg binary package:
@@ -108,7 +108,7 @@ dpkg -r xscreensaver_netwaresmp
 
 To install the source package with the RPM package manager:
 ```sh
-rpm -i xscreensaver-netwaresmp-6.08-5.src.rpm
+rpm -i xscreensaver-netwaresmp-6.08-6.src.rpm
 ```
 
 *(Note: rpm installs the source code files in /root/rpmbuild/ as top directory for RedHat and CentOS
@@ -116,7 +116,7 @@ platforms.  SuSe platforms install the source code files in /usr/src/packages/)*
 
 To install the source package with the Debbuild package tool:
 ```sh
-debbuild -i xscreensaver-netwaresmp-1.6.08-5.sdeb
+debbuild -i xscreensaver-netwaresmp-1.6.08-6.sdeb
 ```
 *(Note: Debbuild installs the source code files in /root/debbuild/ as top directory)*
 
@@ -195,7 +195,7 @@ Most Linux distributions use an outdated xscreensaver program which lacks curren
 ### Installing the xscreensaver-6.08 Code Base
 
 You can clone the screensaver-6.08-netwaresmp code base from github as follows using
-the 'git clone' command, or you can download the netware-xscreensaver-6.08-5.tar.gz
+the 'git clone' command, or you can download the netware-xscreensaver-6.08-6.tar.gz
 archive directly from github, then untar and extract the files.
 
 #### Cloning from Github
@@ -218,15 +218,15 @@ Resolving deltas: 100% (796/796), done.
 
 #### Downloading 
 
-You can also download the xscreensaver-6.08-netwaresmp-6.08-5.tar.gz archive directly
+You can also download the xscreensaver-6.08-netwaresmp-6.08-6.tar.gz archive directly
 from github from the releases section for the xscreensaver-6.08-netwaresmp code base:
 
-- [xscreensaver-6.08-netwaresmp-6.08-5.tar.gz](https://github.com/jeffmerkey/xscreensaver-6.08-netwaresmp/archive/refs/tags/v6.08-5.tar.gz) 
+- [xscreensaver-6.08-netwaresmp-6.08-6.tar.gz](https://github.com/jeffmerkey/xscreensaver-6.08-netwaresmp/archive/refs/tags/v6.08-6.tar.gz) 
 
 After you download the code base, untar the package into a directory:
 
 ```sh
-tar -xf xscreensaver-6.08-netwaresmp-6.08-5.tar.gz 
+tar -xf xscreensaver-6.08-netwaresmp-6.08-6.tar.gz 
 ```
 
 The tar program should extract the files into the following directory.  Use ls -ld 
@@ -234,8 +234,8 @@ to list the directory and archive to verify it was untarred correctly:
 
 ```sh
 [root@localhost Downloads]# ls -ld xscreensaver-\*
-drwxrwxr-x. 9 root    root        4096 Feb 18 22:25 xscreensaver-6.08-netwaresmp-6.08-5
--rw-rw-r--. 1 jmerkey jmerkey 20024886 Feb 20 20:56 xscreensaver-6.08-netwaresmp-6.08-5.tar.gz
+drwxrwxr-x. 9 root    root        4096 Feb 18 22:25 xscreensaver-6.08-netwaresmp-6.08-6
+-rw-rw-r--. 1 jmerkey jmerkey 20024886 Feb 20 20:56 xscreensaver-6.08-netwaresmp-6.08-6.tar.gz
 ```
 
 #### Applying the patch and running autoreconf
@@ -253,8 +253,8 @@ If you cloned the repository:
 If you have downloaded and untarred the repository with the tar -xf command manually:
 
 ```sh
-[root@localhost]# cd xscreensaver-6.08-netwaresmp-6.08-5
-[root@localhost xscreensaver-6.08-netwaresmp-6.08-5]# 
+[root@localhost]# cd xscreensaver-6.08-netwaresmp-6.08-6
+[root@localhost xscreensaver-6.08-netwaresmp-6.08-6]# 
 ```
 The patch is named netwaresmp-xscreensaver-6.08.patch.  You should see a file listing similiar 
 to the following in the base source code directory:

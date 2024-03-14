@@ -1,6 +1,6 @@
 diff -Naur xscreensaver-6.08-orig/driver/XScreenSaver.ad.in xscreensaver-6.08/driver/XScreenSaver.ad.in
 --- xscreensaver-6.08-orig/driver/XScreenSaver.ad.in	2023-10-10 17:24:06.551773885 -0700
-+++ xscreensaver-6.08/driver/XScreenSaver.ad.in	2024-03-10 23:48:37.275926885 -0700
++++ xscreensaver-6.08/driver/XScreenSaver.ad.in	2024-03-13 20:00:35.946625276 -0700
 @@ -413,6 +413,7 @@
  				wander --root				    \n\
  				xflame --root				    \n\
@@ -19,7 +19,7 @@ diff -Naur xscreensaver-6.08-orig/driver/XScreenSaver.ad.in xscreensaver-6.08/dr
  *hacks.photopile.name:      Photo Pile
 diff -Naur xscreensaver-6.08-orig/hacks/config/netwaresmp.xml xscreensaver-6.08/hacks/config/netwaresmp.xml
 --- xscreensaver-6.08-orig/hacks/config/netwaresmp.xml	1969-12-31 16:00:00.000000000 -0800
-+++ xscreensaver-6.08/hacks/config/netwaresmp.xml	2024-03-10 23:49:16.241447436 -0700
++++ xscreensaver-6.08/hacks/config/netwaresmp.xml	2024-03-13 20:01:04.374997892 -0700
 @@ -0,0 +1,50 @@
 +<?xml version="1.0" encoding="ISO-8859-1"?>
 +
@@ -50,7 +50,7 @@ diff -Naur xscreensaver-6.08-orig/hacks/config/netwaresmp.xml xscreensaver-6.08/
 +    <option id="snipes"   _label="Snipes Drawing Mode"  arg-set="--shape 2"/>
 +    <option id="triangle" _label="Triangles Drawing Mode" arg-set="--shape 3"/>
 +    <option id="classic"  _label="Classic Drawing Mode"  arg-set="--shape 4"/>
-+    <option id="arrows"   _label="Arrows Drawing Mode"   arg-set="--shape 5"/>
++    <option id="trees"    _label="Trees Drawing Mode"    arg-set="--shape 5"/>
 +    <option id="3dballs"  _label="3DBalls Drawing Mode"  arg-set="--shape 6"/>
 +  </select>
 +
@@ -73,7 +73,7 @@ diff -Naur xscreensaver-6.08-orig/hacks/config/netwaresmp.xml xscreensaver-6.08/
 +</screensaver>
 diff -Naur xscreensaver-6.08-orig/hacks/Makefile.in xscreensaver-6.08/hacks/Makefile.in
 --- xscreensaver-6.08-orig/hacks/Makefile.in	2023-10-10 17:37:05.846255309 -0700
-+++ xscreensaver-6.08/hacks/Makefile.in	2024-03-10 23:48:37.276926898 -0700
++++ xscreensaver-6.08/hacks/Makefile.in	2024-03-13 20:00:35.948625302 -0700
 @@ -111,7 +111,7 @@
  		  demon.c loop.c t3d.c penetrate.c deluxe.c compass.c \
  		  squiral.c xflame.c wander.c spotlight.c critical.c \
@@ -122,8 +122,8 @@ diff -Naur xscreensaver-6.08-orig/hacks/Makefile.in xscreensaver-6.08/hacks/Make
  
 diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.c xscreensaver-6.08/hacks/netwaresmp.c
 --- xscreensaver-6.08-orig/hacks/netwaresmp.c	1969-12-31 16:00:00.000000000 -0800
-+++ xscreensaver-6.08/hacks/netwaresmp.c	2024-03-10 23:48:54.760160462 -0700
-@@ -0,0 +1,1422 @@
++++ xscreensaver-6.08/hacks/netwaresmp.c	2024-03-13 20:00:51.879834110 -0700
+@@ -0,0 +1,1508 @@
 +/***************************************************************************
 +*
 +*   Copyright(c) Jeff V. Merkey 1997-2024.  All rights reserved.
@@ -211,6 +211,10 @@ diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.c xscreensaver-6.08/hacks/net
 +
 +#define VERBOSE       0
 +#define DEBUG         0
++#define DRAW          0
++#define CLEAR         1
++#define HEAD          1
++#define BODY          0
 +
 +/* worm drawing shapes */
 +#define SQUARES       0
@@ -218,7 +222,7 @@ diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.c xscreensaver-6.08/hacks/net
 +#define SNIPES        2
 +#define TRIANGLES     3
 +#define CLASSIC       4
-+#define ARROWS        5
++#define TREES        5
 +#define BALLS3D       6
 +
 +/* worm state structure */
@@ -536,35 +540,79 @@ diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.c xscreensaver-6.08/hacks/net
 +    return 0;
 +}
 +
-+static void XArrow(STATE *st, int x, int y, int radius, int direction)
++static void Trees(STATE *st, WORM *s, int x, int y, int direction, int c,
++		  unsigned long pixel, int head)
 +{
-+    XPoint points[3];
++    XPoint points1[3], points2[3], points3[3];
 +    double th;
-+    int radius2;
++    int radius, radius2, d, factor;
 +    double tick = ((M_PI * 2) / 18) * 2;
 +
-+    radius *= 0.9;
-+    radius *= direction;
-+    radius2 = radius - (radius / 8) * 3;
++    radius = st->wormsize;
++    radius2 = radius - (radius / 8) * 3; 
 +  
-+    th = 2 * M_PI * (1 / ((double) 360*64));
++    switch (direction) {
++       default: return;
++       case 0: d = 90; break;
++       case 1: d = 90; break;
++       case 2: d = 90; break;
++       case 3: d = 90; break;
++       case 4: d = 90; break;
++       case 5: d = 90; break;
++       case 6: d = 90; break;
++       case 7: d = 90; break;
++    }
 +
-+    points[0].x = x + radius * cos(th);		/* tip */
-+    points[0].y = y + radius * sin(th);
++    th = M_PI * 2 * (d % 360) / 360;
 +
-+    points[1].x = x + radius2 * cos(th - tick);	/* tip left */
-+    points[1].y = y + radius2 * sin(th - tick);
++    factor = 3;
++    points1[0].x = x + radius * cos(th);		
++    points1[0].y = y + -(radius * sin(th));
++    points1[1].x = x + radius2 * cos(th - (tick * factor));	
++    points1[1].y = y + -(radius2 * sin(th - (tick * factor)));
++    points1[2].x = x + radius2 * cos(th + (tick * factor));	
++    points1[2].y = y + -(radius2 * sin(th + (tick * factor)));
 +
-+    points[2].x = x + radius2 * cos(th + tick);	/* tip right */
-+    points[2].y = y + radius2 * sin(th + tick);
++    factor = 2;
++    points2[0].x = x + radius * cos(th);		
++    points2[0].y = factor + y + -(radius * sin(th));
++    points2[1].x = x + radius2 * cos(th - (tick * factor));	
++    points2[1].y = factor + y + -(radius2 * sin(th - (tick * factor)));
++    points2[2].x = x + radius2 * cos(th + (tick * factor));	
++    points2[2].y = factor + y + -(radius2 * sin(th + (tick * factor)));
 +
++    factor = 1;
++    points3[0].x = x + radius * cos(th);		
++    points3[0].y = factor + y + -(radius * sin(th));
++    points3[1].x = x + radius2 * cos(th - (tick * factor));	
++    points3[1].y = factor + y + -(radius2 * sin(th - (tick * factor)));
++    points3[2].x = x + radius2 * cos(th + (tick * factor));	
++    points3[2].y = factor + y + -(radius2 * sin(th + (tick * factor)));
++
++    XSetLineAttributes(st->dpy, st->gc, 1, LineSolid, CapRound, JoinRound);
++
++    XSetForeground(st->dpy, st->gc, pixel);
++    XFillPolygon (st->dpy, st->b, st->gc, points1, 3, Convex, CoordModeOrigin);
++    XSetForeground(st->dpy, st->gc, st->black[0].pixel);
++    XDrawLines(st->dpy, st->b, st->gc, points1, 3, CoordModeOrigin);
++
++    XSetForeground(st->dpy, st->gc, pixel);
++    XFillPolygon (st->dpy, st->b, st->gc, points2, 3, Convex, CoordModeOrigin);
++    XSetForeground(st->dpy, st->gc, st->black[0].pixel);
++    XDrawLines(st->dpy, st->b, st->gc, points2, 3, CoordModeOrigin);
++
++    XSetForeground(st->dpy, st->gc, pixel);
++    XFillPolygon (st->dpy, st->b, st->gc, points3, 3, Convex, CoordModeOrigin);
++    XSetForeground(st->dpy, st->gc, st->black[0].pixel);
++    XDrawLines(st->dpy, st->b, st->gc, points3, 3, CoordModeOrigin);
++
++    XSetForeground(st->dpy, st->gc, pixel);
++    XSetLineAttributes(st->dpy, st->gc, 8, LineSolid, CapRound, JoinRound);
 +    XDrawLine (st->dpy, st->b, st->gc,
 +              (int) (x + radius2 * cos(th)),
-+              (int) (y + radius2 * sin(th)),
++              (int) (y + -radius2 * sin(th)),
 +              (int) (x + -radius * cos(th)),
-+              (int) (y + -radius * sin(th)));
-+
-+    XFillPolygon (st->dpy, st->b, st->gc, points, 3, Convex, CoordModeOrigin);
++              (int) (y + radius * sin(th)));
 +}
 +
 +static void Triangle(STATE *st, int x, int y, int direction, int c)
@@ -598,7 +646,7 @@ diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.c xscreensaver-6.08/hacks/net
 +    }
 +
 +    /* convert from unit circle x,y coordinates to screen x,y coordinates by
-+     * making sin equal to abs -[sin]. */
++     * making y equal to abs -|r * sin(M_PI * 2 * degrees / 360)|. */
 +    points[0].x = (short) x +  (radius * cos(M_PI * 2 * (d % 360 ) / 360));
 +    points[0].y = (short) y + -(radius * sin(M_PI * 2 * (d % 360 ) / 360));
 +    points[1].x = (short) x +  (radius * cos(M_PI * 2 * ((d + 120) % 360) / 360));
@@ -818,23 +866,54 @@ diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.c xscreensaver-6.08/hacks/net
 +   	        st->HEIGHT, st->HEIGHT, 0, 360 * 64);
 +       break;
 +
-+    case ARROWS:
-+       XSetLineAttributes(st->dpy, st->gc, 8, LineSolid, CapRound, 
-+		          JoinRound);
-+       XArrow(st, col * st->WIDTH, row * st->HEIGHT, 30, direction);
++    case TREES:
++       switch (c)
++       {
++          /* head block */
++          case 0:
++	  default:
++             if (head)
++      	        which = st->ncolors >> 1;
++	     else
++      	        which = (st->ncolors >> 1) + 2;
++     	     break;
++          /* dark shade block */
++          case 1:
++	     which = (st->ncolors >> 1) + 3;
++             break;
++          /* medium shade block */
++          case 2:
++	     which = (st->ncolors >> 1) + 4;
++             break;
++          /* light shade block */
++          case 3:
++	     which = (st->ncolors >> 1) + 5;
++             break;
++       }
++       if (clear)
++          Trees(st, s, col * st->WIDTH, row * st->HEIGHT, direction, c,
++                st->black[0].pixel, head);
++       else 
++          Trees(st, s, col * st->WIDTH, row * st->HEIGHT, direction, c,
++                worm_colset[which].pixel, head);
 +       break;
 +
 +    case TRIANGLES:
-+       if (clear) 
-+          XFillArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
-+      	           st->HEIGHT, st->HEIGHT, 0, 360 * 64);
++       /* always clear arc in case of stacked frames from direction changes 
++	* to preserve worm overwrite order */
++       XSetForeground(st->dpy, st->gc, st->black[0].pixel);
++       XFillArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
++   	        st->HEIGHT, st->HEIGHT, 0, 360 * 64);
++
++       if (!clear) 
++          XSetForeground(st->dpy, st->gc, worm_colset[which].pixel);
 +       XSetLineAttributes(st->dpy, st->gc, 
-+	                 (st->HEIGHT / 10) ? (st->HEIGHT / 10) : 1, 
-+		         LineSolid, CapRound, JoinRound);
++                          (st->HEIGHT / 10) ? (st->HEIGHT / 10) : 1, 
++    	                  LineSolid, CapRound, JoinRound);
 +       XDrawArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
-+	        st->HEIGHT, st->HEIGHT, 0, 360 * 64);
++                st->HEIGHT, st->HEIGHT, 0, 360 * 64);
 +       Triangle(st, (col * st->WIDTH) + st->WIDTH, 
-+	        (row * st->HEIGHT) + st->HEIGHT / 2, direction, c);
++               (row * st->HEIGHT) + st->HEIGHT / 2, direction, c);
 +       break;
 +    }
 +
@@ -1130,8 +1209,8 @@ diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.c xscreensaver-6.08/hacks/net
 +    int n;
 +
 +    for (n = s->length_prev - 1; n >= 0; n--) {
-+       worm_write(st, ' ', s->y_prev[n], s->x_prev[n], s, 1, 
-+		  s->d_prev[n], n ? 0 : 1);
++       worm_write(st, ' ', s->y_prev[n], s->x_prev[n], s, CLEAR, 
++		  s->d_prev[n], n ? BODY : HEAD);
 +    }
 +}
 +
@@ -1195,7 +1274,8 @@ diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.c xscreensaver-6.08/hacks/net
 +    mod = s->length % 4;
 +    for (n = s->length - 1; n >= 0 && div; n--) {
 +	   c = n < (div + 1) * mod ? n / (div + 1) : (n - mod) / div;
-+	   worm_write(st, c % 4, s->y[n], s->x[n], s, 0, s->d[n], n ? 0 : 1);
++	   worm_write(st, c % 4, s->y[n], s->x[n], s, DRAW, s->d[n], 
++	 	      n ? BODY : HEAD);
 +#if VERBOSE
 +       printf("cpu %d x[n] = %d y[n] = %d n = %d\n",
 +	      s->cpu, s->x[n], s->y[n], n);
@@ -1333,6 +1413,12 @@ diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.c xscreensaver-6.08/hacks/net
 +    st->WIDTH = st->wormsize / 2;
 +
 +    switch (st->shape) {
++    case TREES:
++       if (st->wormsize < 30)
++          st->wormsize = 30;
++       st->HEIGHT = st->wormsize + 10;
++       st->WIDTH = (st->wormsize + 10) / 2;
++       break;
 +    case SNIPES:
 +    case CLASSIC:
 +       if (!st->charset)
@@ -1482,7 +1568,7 @@ diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.c xscreensaver-6.08/hacks/net
 +
 +static Bool netwaresmp_event(Display *dpy, Window window, void *closure, XEvent *event)
 +{
-+        return False;
++	return False;
 +}
 +
 +static void netwaresmp_free(Display *dpy, Window window, void *closure)
@@ -1548,7 +1634,7 @@ diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.c xscreensaver-6.08/hacks/net
 +XSCREENSAVER_MODULE ("NetwareSMP", netwaresmp)
 diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.man xscreensaver-6.08/hacks/netwaresmp.man
 --- xscreensaver-6.08-orig/hacks/netwaresmp.man	1969-12-31 16:00:00.000000000 -0800
-+++ xscreensaver-6.08/hacks/netwaresmp.man	2024-03-10 23:49:00.903242529 -0700
++++ xscreensaver-6.08/hacks/netwaresmp.man	2024-03-13 20:00:56.377893069 -0700
 @@ -0,0 +1,70 @@
 +.TH XScreenSaver 1 "27-Apr-97" "X Version 11"
 +.SH NAME
@@ -1582,13 +1668,13 @@ diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.man xscreensaver-6.08/hacks/n
 +.TP 8
 +.B \-shape 
 +Specify worm drawing mode:  
-+0 for squares, 
++0 for squares (default), 
 +1 for circles, 
 +2 for snipes (from the NetWare game "Snipes", the first distributed network game run over a local area network), 
 +3 for triangles, 
-+4 for classic (retro text-based screensaver from NetWare SMP), 
-+5 for arrows
-+6 for 3D balls, 
++4 for classic (retro text-based NetWare SMP screensaver), 
++5 for trees,
++6 for 3D balls (glx version only), 
 +.TP 8
 +.B \-install
 +Install a private colormap for the window.
@@ -1622,7 +1708,7 @@ diff -Naur xscreensaver-6.08-orig/hacks/netwaresmp.man xscreensaver-6.08/hacks/n
 +1994.  
 diff -Naur xscreensaver-6.08-orig/xscreensaver.spec xscreensaver-6.08/xscreensaver.spec
 --- xscreensaver-6.08-orig/xscreensaver.spec	2023-10-10 17:24:04.989688938 -0700
-+++ xscreensaver-6.08/xscreensaver.spec	2024-03-10 23:48:37.277926911 -0700
++++ xscreensaver-6.08/xscreensaver.spec	2024-03-13 20:04:26.254643982 -0700
 @@ -1,10 +1,13 @@
  %define	name xscreensaver
  %define	version 6.08
@@ -1634,7 +1720,7 @@ diff -Naur xscreensaver-6.08-orig/xscreensaver.spec xscreensaver-6.08/xscreensav
  Name:		%{name}
  Version:	%{version}
 -Release:	1
-+Release:	4
++Release:	6
  Epoch:		1
  License:	BSD
  Group:		Amusements/Graphics
