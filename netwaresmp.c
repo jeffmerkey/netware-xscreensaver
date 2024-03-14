@@ -85,6 +85,10 @@
 
 #define VERBOSE       0
 #define DEBUG         0
+#define DRAW          0
+#define CLEAR         1
+#define HEAD          1
+#define BODY          0
 
 /* worm drawing shapes */
 #define SQUARES       0
@@ -92,7 +96,7 @@
 #define SNIPES        2
 #define TRIANGLES     3
 #define CLASSIC       4
-#define ARROWS        5
+#define TREES        5
 #define BALLS3D       6
 
 /* worm state structure */
@@ -410,35 +414,79 @@ static int XLoadFonts(STATE *st)
     return 0;
 }
 
-static void XArrow(STATE *st, int x, int y, int radius, int direction)
+static void Trees(STATE *st, WORM *s, int x, int y, int direction, int c,
+		  unsigned long pixel, int head)
 {
-    XPoint points[3];
+    XPoint points1[3], points2[3], points3[3];
     double th;
-    int radius2;
+    int radius, radius2, d, factor;
     double tick = ((M_PI * 2) / 18) * 2;
 
-    radius *= 0.9;
-    radius *= direction;
-    radius2 = radius - (radius / 8) * 3;
+    radius = st->wormsize;
+    radius2 = radius - (radius / 8) * 3; 
   
-    th = 2 * M_PI * (1 / ((double) 360*64));
+    switch (direction) {
+       default: return;
+       case 0: d = 90; break;
+       case 1: d = 90; break;
+       case 2: d = 90; break;
+       case 3: d = 90; break;
+       case 4: d = 90; break;
+       case 5: d = 90; break;
+       case 6: d = 90; break;
+       case 7: d = 90; break;
+    }
 
-    points[0].x = x + radius * cos(th);		/* tip */
-    points[0].y = y + radius * sin(th);
+    th = M_PI * 2 * (d % 360) / 360;
 
-    points[1].x = x + radius2 * cos(th - tick);	/* tip left */
-    points[1].y = y + radius2 * sin(th - tick);
+    factor = 3;
+    points1[0].x = x + radius * cos(th);		
+    points1[0].y = y + -(radius * sin(th));
+    points1[1].x = x + radius2 * cos(th - (tick * factor));	
+    points1[1].y = y + -(radius2 * sin(th - (tick * factor)));
+    points1[2].x = x + radius2 * cos(th + (tick * factor));	
+    points1[2].y = y + -(radius2 * sin(th + (tick * factor)));
 
-    points[2].x = x + radius2 * cos(th + tick);	/* tip right */
-    points[2].y = y + radius2 * sin(th + tick);
+    factor = 2;
+    points2[0].x = x + radius * cos(th);		
+    points2[0].y = factor + y + -(radius * sin(th));
+    points2[1].x = x + radius2 * cos(th - (tick * factor));	
+    points2[1].y = factor + y + -(radius2 * sin(th - (tick * factor)));
+    points2[2].x = x + radius2 * cos(th + (tick * factor));	
+    points2[2].y = factor + y + -(radius2 * sin(th + (tick * factor)));
 
+    factor = 1;
+    points3[0].x = x + radius * cos(th);		
+    points3[0].y = factor + y + -(radius * sin(th));
+    points3[1].x = x + radius2 * cos(th - (tick * factor));	
+    points3[1].y = factor + y + -(radius2 * sin(th - (tick * factor)));
+    points3[2].x = x + radius2 * cos(th + (tick * factor));	
+    points3[2].y = factor + y + -(radius2 * sin(th + (tick * factor)));
+
+    XSetLineAttributes(st->dpy, st->gc, 1, LineSolid, CapRound, JoinRound);
+
+    XSetForeground(st->dpy, st->gc, pixel);
+    XFillPolygon (st->dpy, st->b, st->gc, points1, 3, Convex, CoordModeOrigin);
+    XSetForeground(st->dpy, st->gc, st->black[0].pixel);
+    XDrawLines(st->dpy, st->b, st->gc, points1, 3, CoordModeOrigin);
+
+    XSetForeground(st->dpy, st->gc, pixel);
+    XFillPolygon (st->dpy, st->b, st->gc, points2, 3, Convex, CoordModeOrigin);
+    XSetForeground(st->dpy, st->gc, st->black[0].pixel);
+    XDrawLines(st->dpy, st->b, st->gc, points2, 3, CoordModeOrigin);
+
+    XSetForeground(st->dpy, st->gc, pixel);
+    XFillPolygon (st->dpy, st->b, st->gc, points3, 3, Convex, CoordModeOrigin);
+    XSetForeground(st->dpy, st->gc, st->black[0].pixel);
+    XDrawLines(st->dpy, st->b, st->gc, points3, 3, CoordModeOrigin);
+
+    XSetForeground(st->dpy, st->gc, pixel);
+    XSetLineAttributes(st->dpy, st->gc, 8, LineSolid, CapRound, JoinRound);
     XDrawLine (st->dpy, st->b, st->gc,
               (int) (x + radius2 * cos(th)),
-              (int) (y + radius2 * sin(th)),
+              (int) (y + -radius2 * sin(th)),
               (int) (x + -radius * cos(th)),
-              (int) (y + -radius * sin(th)));
-
-    XFillPolygon (st->dpy, st->b, st->gc, points, 3, Convex, CoordModeOrigin);
+              (int) (y + radius * sin(th)));
 }
 
 static void Triangle(STATE *st, int x, int y, int direction, int c)
@@ -472,7 +520,7 @@ static void Triangle(STATE *st, int x, int y, int direction, int c)
     }
 
     /* convert from unit circle x,y coordinates to screen x,y coordinates by
-     * making sin equal to abs -[sin]. */
+     * making y equal to abs -|r * sin(M_PI * 2 * degrees / 360)|. */
     points[0].x = (short) x +  (radius * cos(M_PI * 2 * (d % 360 ) / 360));
     points[0].y = (short) y + -(radius * sin(M_PI * 2 * (d % 360 ) / 360));
     points[1].x = (short) x +  (radius * cos(M_PI * 2 * ((d + 120) % 360) / 360));
@@ -692,23 +740,54 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
    	        st->HEIGHT, st->HEIGHT, 0, 360 * 64);
        break;
 
-    case ARROWS:
-       XSetLineAttributes(st->dpy, st->gc, 8, LineSolid, CapRound, 
-		          JoinRound);
-       XArrow(st, col * st->WIDTH, row * st->HEIGHT, 30, direction);
+    case TREES:
+       switch (c)
+       {
+          /* head block */
+          case 0:
+	  default:
+             if (head)
+      	        which = st->ncolors >> 1;
+	     else
+      	        which = (st->ncolors >> 1) + 2;
+     	     break;
+          /* dark shade block */
+          case 1:
+	     which = (st->ncolors >> 1) + 3;
+             break;
+          /* medium shade block */
+          case 2:
+	     which = (st->ncolors >> 1) + 4;
+             break;
+          /* light shade block */
+          case 3:
+	     which = (st->ncolors >> 1) + 5;
+             break;
+       }
+       if (clear)
+          Trees(st, s, col * st->WIDTH, row * st->HEIGHT, direction, c,
+                st->black[0].pixel, head);
+       else 
+          Trees(st, s, col * st->WIDTH, row * st->HEIGHT, direction, c,
+                worm_colset[which].pixel, head);
        break;
 
     case TRIANGLES:
-       if (clear) 
-          XFillArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
-      	           st->HEIGHT, st->HEIGHT, 0, 360 * 64);
+       /* always clear arc in case of stacked frames from direction changes 
+	* to preserve worm overwrite order */
+       XSetForeground(st->dpy, st->gc, st->black[0].pixel);
+       XFillArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
+   	        st->HEIGHT, st->HEIGHT, 0, 360 * 64);
+
+       if (!clear) 
+          XSetForeground(st->dpy, st->gc, worm_colset[which].pixel);
        XSetLineAttributes(st->dpy, st->gc, 
-	                 (st->HEIGHT / 10) ? (st->HEIGHT / 10) : 1, 
-		         LineSolid, CapRound, JoinRound);
+                          (st->HEIGHT / 10) ? (st->HEIGHT / 10) : 1, 
+    	                  LineSolid, CapRound, JoinRound);
        XDrawArc(st->dpy, st->b, st->gc, col * st->WIDTH, row * st->HEIGHT, 
-	        st->HEIGHT, st->HEIGHT, 0, 360 * 64);
+                st->HEIGHT, st->HEIGHT, 0, 360 * 64);
        Triangle(st, (col * st->WIDTH) + st->WIDTH, 
-	        (row * st->HEIGHT) + st->HEIGHT / 2, direction, c);
+               (row * st->HEIGHT) + st->HEIGHT / 2, direction, c);
        break;
     }
 
@@ -1004,8 +1083,8 @@ static void clear_worm(STATE *st, WORM *s)
     int n;
 
     for (n = s->length_prev - 1; n >= 0; n--) {
-       worm_write(st, ' ', s->y_prev[n], s->x_prev[n], s, 1, 
-		  s->d_prev[n], n ? 0 : 1);
+       worm_write(st, ' ', s->y_prev[n], s->x_prev[n], s, CLEAR, 
+		  s->d_prev[n], n ? BODY : HEAD);
     }
 }
 
@@ -1069,7 +1148,8 @@ static void draw_worm(STATE *st, WORM *s)
     mod = s->length % 4;
     for (n = s->length - 1; n >= 0 && div; n--) {
 	   c = n < (div + 1) * mod ? n / (div + 1) : (n - mod) / div;
-	   worm_write(st, c % 4, s->y[n], s->x[n], s, 0, s->d[n], n ? 0 : 1);
+	   worm_write(st, c % 4, s->y[n], s->x[n], s, DRAW, s->d[n], 
+	 	      n ? BODY : HEAD);
 #if VERBOSE
        printf("cpu %d x[n] = %d y[n] = %d n = %d\n",
 	      s->cpu, s->x[n], s->y[n], n);
@@ -1207,6 +1287,12 @@ static void *netwaresmp_init(Display *dpy, Window window)
     st->WIDTH = st->wormsize / 2;
 
     switch (st->shape) {
+    case TREES:
+       if (st->wormsize < 30)
+          st->wormsize = 30;
+       st->HEIGHT = st->wormsize + 10;
+       st->WIDTH = (st->wormsize + 10) / 2;
+       break;
     case SNIPES:
     case CLASSIC:
        if (!st->charset)
@@ -1356,7 +1442,7 @@ static void netwaresmp_reshape(Display *dpy, Window window, void *closure,
 
 static Bool netwaresmp_event(Display *dpy, Window window, void *closure, XEvent *event)
 {
-        return False;
+	return False;
 }
 
 static void netwaresmp_free(Display *dpy, Window window, void *closure)
