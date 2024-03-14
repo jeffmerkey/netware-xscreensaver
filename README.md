@@ -3,7 +3,7 @@
 ## Table of Contents <!-- omit in toc -->
 - [Description](#description)
 - [Quick Start Guide](#quick-start-guide)
-- [Configuring XScreensaver](#configuring-xscreensaver)
+- [Configuring XScreensaver and Obtaining Older Versions](#configuring-xscreensaver-and-obtaining-older-versions)
 - [Netware SMP Screensaver Options](#netwaresmp-options)
 - [Command Line Options](#command-line-options)
 - [Building the Screensaver from Source](#building-the-screensaver-from-source)
