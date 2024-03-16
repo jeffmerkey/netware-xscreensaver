@@ -121,7 +121,7 @@ To install the binary package with the RPM package manager:
 
 To deinstall the RPM binary package:
 
-    rpm -e xscreensaver-netwaresmp
+    rpm -e xscreensaver
 
 To install the binary package with the Debian dpkg package manager for
 amd64:
@@ -130,7 +130,7 @@ amd64:
 
 To deinstall the Debian dpkg binary package:
 
-    dpkg -r xscreensaver_netwaresmp
+    dpkg -r xscreensaver
 
 INSTALLING SOURCE PACKAGES
 
