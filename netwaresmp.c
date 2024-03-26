@@ -96,8 +96,12 @@
 #define SNIPES        2
 #define TRIANGLES     3
 #define CLASSIC       4
-#define TREES        5
+#define TREES         5
 #define BALLS3D       6
+
+/* The Trees shape is a special case and uses fixed padding */
+#define TREES_PADDING 10
+#define TREES_MINIMUM 20
 
 /* worm state structure */
 typedef struct _WORM
@@ -154,10 +158,10 @@ typedef struct _STATE
     int divisor;
     int prio;
     int mono;
-    int stats;
     int shape;
+    int stats;
+    int toggle_stats;
     char *charset;
-    int sw, sh;
     unsigned long usr[MAX_WORMS];
     unsigned long sys[MAX_WORMS];
     unsigned long nice[MAX_WORMS];
@@ -481,7 +485,8 @@ static void Trees(STATE *st, WORM *s, int x, int y, int direction, int c,
     XDrawLines(st->dpy, st->b, st->gc, points3, 3, CoordModeOrigin);
 
     XSetForeground(st->dpy, st->gc, pixel);
-    XSetLineAttributes(st->dpy, st->gc, 8, LineSolid, CapRound, JoinRound);
+    XSetLineAttributes(st->dpy, st->gc, (st->wormsize / 4), 
+		    LineSolid, CapRound, JoinRound);
     XDrawLine (st->dpy, st->b, st->gc,
               (int) (x + radius2 * cos(th)),
               (int) (y + -radius2 * sin(th)),
@@ -765,11 +770,15 @@ static void worm_write(STATE *st, int c, long row, long col, WORM *s,
              break;
        }
        if (clear)
-          Trees(st, s, col * st->WIDTH, row * st->HEIGHT, direction, c,
-                st->black[0].pixel, head);
+          Trees(st, s, 
+		col * st->WIDTH + (st->wormsize / 2) + (TREES_PADDING / 2), 
+		row * st->HEIGHT + (st->wormsize / 2) + (TREES_PADDING / 2), 
+		direction, c, st->black[0].pixel, head);
        else 
-          Trees(st, s, col * st->WIDTH, row * st->HEIGHT, direction, c,
-                worm_colset[which].pixel, head);
+          Trees(st, s, 
+		col * st->WIDTH + (st->wormsize / 2) + (TREES_PADDING / 2), 
+		row * st->HEIGHT + (st->wormsize / 2) + (TREES_PADDING / 2), 
+		direction, c, worm_colset[which].pixel, head);
        break;
 
     case TRIANGLES:
@@ -1288,10 +1297,10 @@ static void *netwaresmp_init(Display *dpy, Window window)
 
     switch (st->shape) {
     case TREES:
-       if (st->wormsize < 30)
-          st->wormsize = 30;
-       st->HEIGHT = st->wormsize + 10;
-       st->WIDTH = (st->wormsize + 10) / 2;
+       if (st->wormsize < TREES_MINIMUM)
+          st->wormsize = TREES_MINIMUM;
+       st->HEIGHT = st->wormsize + TREES_PADDING;
+       st->WIDTH = (st->wormsize + TREES_PADDING) / 2;
        break;
     case SNIPES:
     case CLASSIC:
@@ -1442,7 +1451,48 @@ static void netwaresmp_reshape(Display *dpy, Window window, void *closure,
 
 static Bool netwaresmp_event(Display *dpy, Window window, void *closure, XEvent *event)
 {
-	return False;
+    STATE *st = (STATE *) closure; 
+
+    if (event->xany.type == KeyPress)
+    {
+       KeySym keysym;
+       char c = 0;
+       XLookupString(&event->xkey, &c, 1, &keysym, 0);
+
+       if (keysym == XK_Escape) {
+#if VERBOSE
+          printf("key press: %c keysym: %lu\n", c, keysym);       
+	  printf("exit program\n");
+#endif
+          return False;
+       } else
+       if (keysym == XK_F1) {
+#if VERBOSE
+          printf("key press: %c keysym: %lu\n", c, keysym);
+#endif
+          if (!st->toggle_stats) {
+#if VERBOSE
+	     printf("activate stats panel\n");
+#endif
+             st->toggle_stats = 1;
+	  } else {
+#if VERBOSE
+	     printf("deactivate stats panel\n");
+#endif
+             st->toggle_stats = 0;
+          }
+	  return True;
+       } else 
+       if (c == 'q' || c == 'Q') {
+#if VERBOSE
+          printf("key press: %c keysym: %lu\n", c, keysym);       
+	  printf("deactivate stats panel\n");
+#endif
+          return False;
+       }
+       return True;
+    }
+    return False;
 }
 
 static void netwaresmp_free(Display *dpy, Window window, void *closure)
@@ -1506,3 +1556,7 @@ static XrmOptionDescRec netwaresmp_options [] = {
 };
 
 XSCREENSAVER_MODULE ("NetwareSMP", netwaresmp)
+
+
+
+
