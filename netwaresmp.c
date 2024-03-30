@@ -408,7 +408,7 @@ static int XLoadFonts(STATE *st)
     }
 
     /* reset height, width, lines, and columns based on font metrics */
-    st->HEIGHT = ((st->xftfont->height + 1) * 2) / 2;
+    st->HEIGHT = st->xftfont->height;
     st->WIDTH = st->HEIGHT / 2;
 
     XGetWindowAttributes (st->dpy, st->window, &st->xgwa);
