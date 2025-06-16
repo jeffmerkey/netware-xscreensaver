@@ -26,7 +26,7 @@ against the XScreensaver v6.10.1-0 base and you may have to deinstall any older 
 running and then reinstall with the RPM or DEB packages listed in the releases section.  
 
 Most Linux distributions use an outdated xscreensaver program which lacks current bug fixes and new capabilities.    
-It's a good idea to upgrade to the xscreensaver 6.08 release since there have been many bug fixes and enhanced features in 
+It's a good idea to upgrade to the xscreensaver 6.10.1 release since there have been many bug fixes and enhanced features in 
 the most current maintained version of XScreensaver. 
 
 If you want to build the program from scratch with the git sources rather than use the pre-compiled RPMS and DEB packages, then please skip to the section [Building the Screensaver from Source](#building-the-screensaver-from-source) for instructions on how to do this. 
@@ -189,14 +189,14 @@ _netwaresmp_ accepts the following options:
 
 It should be noted that since the xscreensaver-netwaresmp code base is provided as a Source RPM and DEB packages, it's very simple and straight forward to rebuild the RPM or DEB packages without needing to resort to a manual rebuild.  However, users on ARM64 systems and Debian users may need to build the program manually.  You are encouraged to use the RPM method to rebuild the code but in the event you need to do so manually, the following section describes the steps for accomplishing this. 
 
-In order to build the xscreensaver with netwaresmp fully integrated, you should first clone the xscreensaver-6.10 repository.  This repository is a generic xscreensaver-6.08 code base with the X11 netwaresmp screensaver included as a patch series.  This approach is implemented with a patch series in this manner for two reasons.  First, it is necessary to re-run the autoreconf automake program after downloading the sources and applying the patch series in order to integrate the netwaresmp screensaver into the xscreensaver-settings configuration tool.  The build for xscreensaver-settings setup utility uses a static file to list integrated screensavers and this file is only updated by running autoreconf against the code base.  Second, this approach allows the netwaresmp patch series to be applied to previous versions of xscreensaver package prior to the 6.08 release.  
+In order to build the xscreensaver with netwaresmp fully integrated, you should first clone the xscreensaver-6.10 repository.  This repository is a generic xscreensaver-6.10.1 code base with the X11 netwaresmp screensaver included as a patch series.  This approach is implemented with a patch series in this manner for two reasons.  First, it is necessary to re-run the autoreconf automake program after downloading the sources and applying the patch series in order to integrate the netwaresmp screensaver into the xscreensaver-settings configuration tool.  The build for xscreensaver-settings setup utility uses a static file to list integrated screensavers and this file is only updated by running autoreconf against the code base.  Second, this approach allows the netwaresmp patch series to be applied to previous versions of xscreensaver package prior to the 6.10.1 release.  
 
-Most Linux distributions use an outdated xscreensaver program which lacks current bug fixes and new capabilities.  It should be noted that there are subtle programming differences between many of these earlier versions.  I have not fully tested the Netware SMP screensaver on all of these earlier distributions, however, in most cases the existing netwaresmp patch series should work on most of them.  If you have problems trying to apply the patch series to an xscreensaver release, please feel free to post an Issue to [Issues](#issues--problems--help) and I will look into it and get back to you and provide an updated patch for that xscreensaver distribution.  It's actually a lot better if you just choose to upgrade to the xscreensaver 6.08 release since there have been many bug fixes and enhanced features in the newer code base.  It's also a lot less complicated since the newer release is a single RPM for the entire xscreensaver distribution, instead of xscreensaver being provided as dozens of packages for each xscreensaver distro such as RedHat provides, which is difficult for end users to a manage and navigate. 
+Most Linux distributions use an outdated xscreensaver program which lacks current bug fixes and new capabilities.  It should be noted that there are subtle programming differences between many of these earlier versions.  I have not fully tested the Netware SMP screensaver on all of these earlier distributions, however, in most cases the existing netwaresmp patch series should work on most of them.  If you have problems trying to apply the patch series to an xscreensaver release, please feel free to post an Issue to [Issues](#issues--problems--help) and I will look into it and get back to you and provide an updated patch for that xscreensaver distribution.  It's actually a lot better if you just choose to upgrade to the xscreensaver 6.10.1 release since there have been many bug fixes and enhanced features in the newer code base.  It's also a lot less complicated since the newer release is a single RPM for the entire xscreensaver distribution, instead of xscreensaver being provided as dozens of packages for each xscreensaver distro such as RedHat provides, which is difficult for end users to a manage and navigate. 
 
-### Installing the xscreensaver-6.08 Code Base
+### Installing the xscreensaver-6.10.1 Code Base
 
 You can clone the screensaver-6.10 code base from github as follows using
-the 'git clone' command, or you can download the netware-xscreensaver-6.08-6.tar.gz
+the 'git clone' command, or you can download the xscreensaver-6.10.1-0.tar.gz
 archive directly from github, then untar and extract the files.
 
 #### Cloning from Github
@@ -219,15 +219,15 @@ Resolving deltas: 100% (796/796), done.
 
 #### Downloading 
 
-You can also download the xscreensaver-6.10-6.08-6.tar.gz archive directly
+You can also download the xscreensaver-6.10.1-0.tar.gz archive directly
 from github from the releases section for the xscreensaver-6.10 code base:
 
-- [xscreensaver-6.10-6.08-6.tar.gz](https://github.com/jeffmerkey/xscreensaver-6.10/archive/refs/tags/v6.10.1-0.tar.gz) 
+- [xscreensaver-6.10-6.10.1-6.tar.gz](https://github.com/jeffmerkey/xscreensaver-6.10/archive/refs/tags/v6.10.1-0.tar.gz) 
 
 After you download the code base, untar the package into a directory:
 
 ```sh
-tar -xf xscreensaver-6.10-6.08-6.tar.gz 
+tar -xf xscreensaver-6.10.1-0.tar.gz 
 ```
 
 The tar program should extract the files into the following directory.  Use ls -ld 
@@ -235,8 +235,8 @@ to list the directory and archive to verify it was untarred correctly:
 
 ```sh
 [root@localhost Downloads]# ls -ld xscreensaver-\*
-drwxrwxr-x. 9 root    root        4096 Feb 18 22:25 xscreensaver-6.10-6.08-6
--rw-rw-r--. 1 jmerkey jmerkey 20024886 Feb 20 20:56 xscreensaver-6.10-6.08-6.tar.gz
+drwxrwxr-x. 9 root    root        4096 Feb 18 22:25 xscreensaver-6.10.1-0
+-rw-rw-r--. 1 jmerkey jmerkey 20024886 Feb 20 20:56 xscreensaver-6.10.1-0.tar.gz
 ```
 
 #### Applying the patch and running autoreconf
@@ -254,10 +254,10 @@ If you cloned the repository:
 If you have downloaded and untarred the repository with the tar -xf command manually:
 
 ```sh
-[root@localhost]# cd xscreensaver-6.10-6.08-6
-[root@localhost xscreensaver-6.10-6.08-6]# 
+[root@localhost]# cd xscreensaver-6.10.1-0
+[root@localhost xscreensaver-6.10.1-0]# 
 ```
-The patch is named netwaresmp-xscreensaver-6.08.patch.  You should see a file listing similiar 
+The patch is named netwaresmp-xscreensaver-6.10.patch.  You should see a file listing similiar 
 to the following in the base source code directory:
 ```sh
 [root@localhost xscreensaver-6.10]# ll
@@ -281,7 +281,7 @@ drwxr-xr-x. 6 root root  12288 Feb 20 20:33 hacks
 -rwxr-xr-x. 1 root root  15635 Feb 20 20:33 intltool-update.in
 drwxr-xr-x. 2 root root   4096 Feb 20 20:33 jwxyz
 -rw-r--r--. 1 root root  15344 Feb 20 20:33 Makefile.in
--rw-r--r--. 1 root root  42160 Feb 20 20:33 netwaresmp-xscreensaver-6.08.patch
+-rw-r--r--. 1 root root  42160 Feb 20 20:33 netwaresmp-xscreensaver-6.10.patch
 drwxr-xr-x. 9 root root   4096 Feb 20 20:33 OSX
 drwxr-xr-x. 2 root root   4096 Feb 20 20:33 po
 -rw-r--r--. 1 root root  82109 Feb 20 20:33 README
@@ -295,12 +295,12 @@ drwxr-xr-x. 3 root root   4096 Feb 20 20:33 utils
 
 Apply the patch with the following command:
 ```sh
-[root@localhost xscreensaver-6.10]# patch -p1 < netwaresmp-xscreensaver-6.08.patch 
+[root@localhost xscreensaver-6.10]# patch -p1 < netwaresmp-xscreensaver-6.10.patch 
 ```
 The patching process should produde the following output:
 
 ```sh
-[root@localhost xscreensaver-6.10]# patch -p1 < netwaresmp-xscreensaver-6.08.patch
+[root@localhost xscreensaver-6.10]# patch -p1 < netwaresmp-xscreensaver-6.10.1.patch
 patching file driver/XScreenSaver.ad.in
 patching file hacks/config/netwaresmp.xml
 patching file hacks/Makefile.in
@@ -310,7 +310,7 @@ patching file xscreensaver.spec
 [root@localhost xscreensaver-6.10]#
 ```
 
-If you see a printout indicating the patch was successfully applied, then you can now run autoreconf program and start the build.   You can apply this patch in a similiar manner to most of the xscreensaver code bases prior to 6.08 and it will work on most of the distros.  If you run into trouble, post an Issues report on github at [Issues / Problems / Help](#issues--problems--help)
+If you see a printout indicating the patch was successfully applied, then you can now run autoreconf program and start the build.   You can apply this patch in a similiar manner to most of the xscreensaver code bases prior to 6.10.1 and it will work on most of the distros.  If you run into trouble, post an Issues report on github at [Issues / Problems / Help](#issues--problems--help)
 .
 
 Now run autoreconf to re-create the Makefiles and Configuration scripts:
@@ -334,7 +334,7 @@ autoreconf: configure.ac: not using Automake
 autoreconf: Leaving directory `.
 [root@localhost xscreensaver-6.10]# 
 ```
-Now type 'configure' and then type 'make' to build the  xscreensaver-netwaresmp-6.08 package.  If the make process succeeds, then perform 'make install' to install the xscreensaver package to your system:
+Now type 'configure' and then type 'make' to build the  xscreensaver-netwaresmp-6.10.1 package.  If the make process succeeds, then perform 'make install' to install the xscreensaver package to your system:
 
 ```sh
 [root@localhost xscreensaver-6.10]# ./configure; 
@@ -418,7 +418,7 @@ to build the rpm package.
 To build the XScreensaver using the rpm tool, change directories (cd) into the /root/rpmbuild/SPECS/ directory (/usr/src/packages/SPECS/ for SuSe) and enter the following command:
 
 ```sh
-rpmbuild -ba xscreensaver-6.8.spec <enter>
+rpmbuild -ba xscreensaver-6.10.spec <enter>
 ```
 
 ## **Building as a Debian Package**
@@ -441,7 +441,7 @@ DEB package.
 
 To build the XScreensaver using debbuild, change directories (cd) into the /root/debbuild/SPECS/ directory and enter the following command:
 ```sh
-debbuild -vv -ba xscreensaver-6.08.spec <enter>
+debbuild -vv -ba xscreensaver-6.10.spec <enter>
 ```
 ## **Copyright**
 
