@@ -28,7 +28,6 @@
     <option id="triangle" _label="Triangles Drawing Mode" arg-set="--shape 3"/>
     <option id="classic"  _label="Classic Drawing Mode"  arg-set="--shape 4"/>
     <option id="trees"    _label="Trees Drawing Mode"    arg-set="--shape 5"/>
-    <option id="3dballs"  _label="3DBalls Drawing Mode"  arg-set="--shape 6"/>
   </select>
 
   <boolean id="mono"  _label="Mono Color Mode" arg-set="--mono"/>
