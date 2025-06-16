@@ -3,12 +3,14 @@
 # override the default configure macro to remove --disable-dependency-tracking
 # which causes this version of xscreensaver to fail rpmbuild on Rhel8 Systems
 %define configure ./configure --build=%{_build} --host=%{_host} --program-prefix=%{?_program_prefix} %{?_configure_disable_silent_rules:--disable-silent-rules}	--prefix=%{_prefix} --exec-prefix=%{_exec_prefix} --bindir=%{_bindir} --sbindir=%{_sbindir} --sysconfdir=%{_sysconfdir} --datadir=%{_datadir} --includedir=%{_includedir} --libdir=%{_libdir} --libexecdir=%{_libexecdir} --localstatedir=%{_localstatedir} --sharedstatedir=%{_sharedstatedir} --mandir=%{_mandir} --infodir=%{_infodir}
+%define _rpmfilename %%{ARCH}/%%{NAME}-%%{EPOCH}:%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm
 
 Summary:	X screen saver and locker
 Name:		%{name}
 Version:	%{version}
 Release:	0
-Epoch:		1
+# set to epoch 2 to override rhel 8 repos which distribute out of date versions 
+Epoch:		2
 License:	BSD
 Group:		Amusements/Graphics
 URL:		https://www.jwz.org/xscreensaver/

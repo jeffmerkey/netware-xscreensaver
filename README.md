@@ -170,8 +170,7 @@ _netwaresmp_ accepts the following options:
   2 for snipes (from the NetWare game "Snipes", the first distributed network game run over a local area network), 
   3 for triangles, 
   4 for classic (retro text-based screensaver from NetWare SMP), 
-  5 for trees,
-  6 for 3D balls, 
+  5 for trees.
 * **--install**  
   Install a private colormap for the window.
 * **--visual _visual_**  
