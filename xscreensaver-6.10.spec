@@ -48,7 +48,7 @@ BuildRequires:	libjpeg-turbo-devel
 Requires: pam
 Requires: /etc/pam.d/system-auth
 #Requires: htmlview
-Requires: desktop-backgrounds-basic
+#Requires: desktop-backgrounds-basic
 Requires: xdg-utils
 Requires: systemd-libs
 
