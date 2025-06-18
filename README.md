@@ -125,6 +125,58 @@ For building or rebuilding RPMS or DEB Packages after you have installed the ass
 - [Building the Screensaver as an RPM Package (Redhat/CentOS/SuSe)](#building-as-an-rpm-package)
 - [Building the Screensaver as a Debian Package (Debian/Ubuntu)](#building-as-a-debian-package)
 
+## **Help! "dnf update -y" overwrites and downgrades my xscreensaver version**
+
+Red Hat uses an epoch designator (num:package version) in the rpm filename for it's versions of 
+xscreensaver, i.e. "xscreensaver-1:5.45" where "1:" is an override epoch number which will override
+later versions of the software.  Red Hat does this to force overwrite of later installs of the 
+xscreensaver program.  By way of example, if you install xscreensaver-6.10.1 on your system, when
+dnf runs an update, it will downgrade the xscreensaver to v5.45 since it contains an epoch number
+in the filename.  Renaming your file and inserting your own higher epoch (i.e. 2:package version) 
+may not always work in all instances, and the use of epoch numbers is a bad practice to promote.
+
+The better method is to tell dnf not to upgrade the xscreensaver program at all, and to skip 
+automated upgrades (or downgrades as the case may be), requiring that you explicitly upgrade
+or downgrade the xscreensaver program yourself.  dnf provides a simple method to enable this
+capability.  Open a command line interface on linux, and use the vim text editor:
+
+```sh
+vim /etc/dnf/dnf.conf
+``` 
+
+you should see something similiar to the following:
+
+```sh
+[main]
+gpgcheck=1
+installonly_limit=3
+clean_requirements_on_remove=True
+best=True
+skip_if_unavailable=False
+exclude= c-icap* squid 
+fastestmirror=true
+```
+The "exclude" entry in this file lists programs that dnf will skip from automated updates.
+Add "xscreensaver" to this list.  The list accepts wildcard values.  By way of example, 
+this exclude setting states that any "c-icap\*" or "squid" program will be skipped by dnf.
+
+Edit this file and add the "xscreensaver" package name to be excluded.  Your file should
+look like this after you add this entry:
+
+```sh
+[main]
+gpgcheck=1
+installonly_limit=3
+clean_requirements_on_remove=True
+best=True
+skip_if_unavailable=False
+exclude= c-icap* squid xscreensaver
+fastestmirror=true
+``` 
+
+Save your changes (:w) and when you run dnf, it will ignore updates of xscreensaver from 
+Red Hat's old, outdated xscreensaver versions.  
+
 ## **Configuring XScreensaver and Obtaining Older Versions**
 
 For detailed instructions on how to install and configure the XScreensaver base program, please refer to the online 
