@@ -155,7 +155,6 @@ the associated source packages on your platform, refer to the following:
 -   Building the Screensaver as an RPM Package (Redhat/CentOS/SuSe)
 -   Building the Screensaver as a Debian Package (Debian/Ubuntu)
 
-
 HELP! “DNF UPDATE -Y” OVERWRITES AND DOWNGRADES MY XSCREENSAVER VERSION
 
 Red Hat uses an epoch designator (num:package version) in the rpm
