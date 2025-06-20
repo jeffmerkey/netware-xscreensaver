@@ -3,6 +3,7 @@
 ## Table of Contents <!-- omit in toc -->
 - [Description](#description)
 - [Quick Start Guide](#quick-start-guide)
+- [Help! "dnf update -y" overwrites and downgrades my xscreensaver version](#Help!-"dnf-update--y"-overwrites-and-downgrades-my-xscreensaver-version)
 - [Configuring XScreensaver and Obtaining Older Versions](#configuring-xscreensaver-and-obtaining-older-versions)
 - [Netware SMP Screensaver Options](#netwaresmp-options)
 - [Command Line Options](#command-line-options)
@@ -125,7 +126,7 @@ For building or rebuilding RPMS or DEB Packages after you have installed the ass
 - [Building the Screensaver as an RPM Package (Redhat/CentOS/SuSe)](#building-as-an-rpm-package)
 - [Building the Screensaver as a Debian Package (Debian/Ubuntu)](#building-as-a-debian-package)
 
-### **Help! "dnf update -y" overwrites and downgrades my xscreensaver version**
+## **Help! "dnf update -y" overwrites and downgrades my xscreensaver version**
 
 Red Hat uses an epoch designator (num:package version) in the rpm filename for it's versions of 
 xscreensaver, i.e. "xscreensaver-1:5.45" where "1:" is an override epoch number which will override
@@ -349,7 +350,7 @@ Apply the patch with the following command:
 ```sh
 [root@localhost xscreensaver-6.10]# patch -p1 < netwaresmp-xscreensaver-6.10.patch 
 ```
-The patching process should produde the following output:
+The patching process should produce the following output:
 
 ```sh
 [root@localhost xscreensaver-6.10]# patch -p1 < netwaresmp-xscreensaver-6.10.patch
