@@ -7,8 +7,6 @@ Table of Contents
 
 -   Description
 -   Quick Start Guide
--   Help! “dnf update -y” overwrites and downgrades my xscreensaver
-    version
 -   Configuring XScreensaver and Obtaining Older Versions
 -   Netware SMP Screensaver Options
 -   Command Line Options
@@ -156,7 +154,6 @@ the associated source packages on your platform, refer to the following:
 
 -   Building the Screensaver as an RPM Package (Redhat/CentOS/SuSe)
 -   Building the Screensaver as a Debian Package (Debian/Ubuntu)
-
 
 HELP! “DNF UPDATE -Y” OVERWRITES AND DOWNGRADES MY XSCREENSAVER VERSION
 
