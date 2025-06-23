@@ -216,7 +216,7 @@ Experimental Wayland support using the Wayland ext-idle-notify-v1
 protocol with the swayidle client is under development and testing. You
 must have installed a wayland compositor that supports this
 ext-idle-notify-v1/2 protocol. Almost all of the wayland compositors
-support this protocol. Under wayland, in most cases the xscreesnaver
+support this protocol. Under wayland, in most cases the xscreensaver
 daemon is no longer required, and you can directly configure the
 swayidle and swaylock wayland utilities to invoke xscreensaver-Gtk
 directly to launch a configured xscreensaver session under wayland.
