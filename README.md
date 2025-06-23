@@ -3,6 +3,7 @@
 ## Table of Contents <!-- omit in toc -->
 - [Description](#description)
 - [Quick Start Guide](#quick-start-guide)
+- [Wayland Support](#wayland-support)
 - [Configuring XScreensaver and Obtaining Older Versions](#configuring-xscreensaver-and-obtaining-older-versions)
 - [Netware SMP Screensaver Options](#netwaresmp-options)
 - [Command Line Options](#command-line-options)
@@ -176,6 +177,12 @@ fastestmirror=true
 
 Save your changes (:w) and when you run dnf, it will ignore updates of xscreensaver from 
 Red Hat's old, outdated xscreensaver versions.  
+
+## **Wayland Support for XScreensaver**
+
+Experimental Wayland support using the Wayland ext-idle-notify-v1 protocol with the swayidle client is under development and testing.  You must have installed a wayland compositor that supports this ext-idle-notify-v1/2 protocol.  Almost all of the wayland compositors support this protocol.  Under wayland, in most cases the xscreesnaver daemon is no longer required, and you can directly configure the swayidle and swaylock wayland utilities to invoke xscreensaver-Gtk directly to launch a configured xscreensaver session under wayland.  Please be advised, wayland adoption is still in process on most linux distros, so there are some of the older wayland compositors which do not fully support the idle protocols under wayland.  This repository has a Wayland branch for anyone wanting to test xscreensaver over wayland using swayidle.  
+
+See [https://github.com/jeffmerkey/xscreensaver-6.10/tree/wayland](https://github.com/jeffmerkey/xscreensaver-6.10/tree/wayland)
 
 ## **Configuring XScreensaver and Obtaining Older Versions**
 
