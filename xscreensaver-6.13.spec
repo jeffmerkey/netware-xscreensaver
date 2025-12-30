@@ -55,29 +55,29 @@ Requires: (attr or xattr)
 
 Provides: xscreensaver
 
-Obsoletes: xscreensaver-base
-Obsoletes: xscreensaver-common
-Obsoletes: xscreensaver-data
-Obsoletes: xscreensaver-data-extra
-Obsoletes: xscreensaver-extra
-Obsoletes: xscreensaver-extra-base
-Obsoletes: xscreensaver-extra-gss
-Obsoletes: xscreensaver-extras
-Obsoletes: xscreensaver-extras-base
-Obsoletes: xscreensaver-extras-gss
-Obsoletes: xscreensaver-extrusion
-Obsoletes: xscreensaver-gl
-Obsoletes: xscreensaver-gl-base
-Obsoletes: xscreensaver-gl-extra
-Obsoletes: xscreensaver-gl-extra-gss
-Obsoletes: xscreensaver-gl-extras
-Obsoletes: xscreensaver-gl-extras-gss
-Obsoletes: xscreensaver-lang
-Obsoletes: xscreensaver-matrix
-Obsoletes: xscreensaver-bsod
-Obsoletes: xscreensaver-webcollage
-Obsoletes: xscreensaver-screensaver-bsod
-Obsoletes: xscreensaver-screensaver-webcollage
+Obsoletes: xscreensaver-base			< %{version}
+Obsoletes: xscreensaver-common			< %{version}
+Obsoletes: xscreensaver-data			< %{version}
+Obsoletes: xscreensaver-data-extra		< %{version}
+Obsoletes: xscreensaver-extra			< %{version}
+Obsoletes: xscreensaver-extra-base		< %{version}
+Obsoletes: xscreensaver-extra-gss		< %{version}
+Obsoletes: xscreensaver-extras			< %{version}
+Obsoletes: xscreensaver-extras-base		< %{version}
+Obsoletes: xscreensaver-extras-gss		< %{version}
+Obsoletes: xscreensaver-extrusion		< %{version}
+Obsoletes: xscreensaver-gl			< %{version}
+Obsoletes: xscreensaver-gl-base			< %{version}
+Obsoletes: xscreensaver-gl-extra		< %{version}
+Obsoletes: xscreensaver-gl-extra-gss		< %{version}
+Obsoletes: xscreensaver-gl-extras		< %{version}
+Obsoletes: xscreensaver-gl-extras-gss		< %{version}
+Obsoletes: xscreensaver-lang			< %{version}
+Obsoletes: xscreensaver-matrix			< %{version}
+Obsoletes: xscreensaver-bsod			< %{version}
+Obsoletes: xscreensaver-webcollage		< %{version}
+Obsoletes: xscreensaver-screensaver-bsod 	< %{version}
+Obsoletes: xscreensaver-screensaver-webcollage	< %{version}
 
 %description
 A modular screen saver and locker for the X Window System.
