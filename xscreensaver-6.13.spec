@@ -38,7 +38,7 @@ BuildRequires:	pam-devel
 BuildRequires:	systemd-devel
 BuildRequires:	gtk3-devel
 BuildRequires:	gdk-pixbuf2-devel
-BuildRequires:	libglade2
+#BuildRequires:	libglade2
 BuildRequires:	libxml2-devel
 BuildRequires:	gettext-devel
 BuildRequires:	libjpeg-turbo-devel
@@ -85,7 +85,8 @@ More than 250 display modes are included in this package.
 
 %prep
 %setup -q
-%patch1 -p1 
+# %patch<#> is deprecated as of RHEL 10, use %patch -P <#> instead.
+%patch -P 1 -p1 
 autoreconf -v -f
 if [ -x %{_datadir}/libtool/config.guess ]; then
   # use system-wide copy
