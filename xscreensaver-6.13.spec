@@ -1,22 +1,23 @@
 %define	name xscreensaver
 %define	version 6.13
-# override the default configure macro to remove --disable-dependency-tracking
-# which causes this version of xscreensaver to fail rpmbuild on Rhel8 Systems
 
 Summary:	X screen saver and locker
 Name:		%{name}
 Version:	%{version}
 Release:	0
-#Epoch:		1
 License:	BSD
 Group:		Amusements/Graphics
 URL:		https://www.jwz.org/xscreensaver/
 Source0:	https://www.jwz.org/xscreensaver/xscreensaver-%{version}.tar.gz
 Vendor:		Jamie Zawinski <jwz@jwz.org>
-Packager:	Jeffrey Merkey <jeffmerkey@gmail.com>
 Buildroot:	%{_tmppath}/%{name}-root
-
 Patch1:         netwaresmp-xscreensaver-6.13.patch
+
+# Red Hat uses an epoch number to make RPM believe that their old RPM with
+# number "1:5.45" is newer than your "6.00".  The technical term for this
+# is "a dick move".  If that's happening to you, increment this number:
+#
+# Epoch:	2
 
 BuildRequires:	perl
 BuildRequires:	pkgconfig
@@ -33,12 +34,22 @@ BuildRequires:	libXxf86vm-devel
 BuildRequires:	xorg-x11-proto-devel
 BuildRequires:	mesa-libGL-devel
 BuildRequires:	mesa-libGLU-devel
-#BuildRequires:	libgle-devel
+%if 0%{?rhel} >= 8
+# libgle-devel is deprecated in RHEL 8/9 and it's 
+# functionality moved into mesa-libGL-devel
+%else
+BuildRequires:	libgle-devel
+%endif
 BuildRequires:	pam-devel
 BuildRequires:	systemd-devel
 BuildRequires:	gtk3-devel
 BuildRequires:	gdk-pixbuf2-devel
-#BuildRequires:	libglade2
+%if 0%{?rhel} >= 10
+# libglade2 is deprecated in RHEL 10 and it's 
+# functionality moved into gtk3-devel
+%else
+BuildRequires:	libglade2
+%endif
 BuildRequires:	libxml2-devel
 BuildRequires:	gettext-devel
 BuildRequires:	libjpeg-turbo-devel
@@ -76,18 +87,22 @@ Obsoletes: xscreensaver-lang			< %{version}
 Obsoletes: xscreensaver-matrix			< %{version}
 Obsoletes: xscreensaver-bsod			< %{version}
 Obsoletes: xscreensaver-webcollage		< %{version}
-Obsoletes: xscreensaver-screensaver-bsod 	< %{version}
+Obsoletes: xscreensaver-screensaver-bsod	< %{version}
 Obsoletes: xscreensaver-screensaver-webcollage	< %{version}
+
 
 %description
 A modular screen saver and locker for the X Window System.
-More than 250 display modes are included in this package.
+More than 260 display modes are included in this package.
 
 %prep
 %setup -q
+
 # %patch<#> is deprecated as of RHEL 10, use %patch -P <#> instead.
 %patch -P 1 -p1 
+
 autoreconf -v -f
+
 if [ -x %{_datadir}/libtool/config.guess ]; then
   # use system-wide copy
   cp -p %{_datadir}/libtool/config.{sub,guess} .
@@ -97,29 +112,33 @@ fi
 archdir="`./config.guess`"
 mkdir "$archdir" || exit 1
 cd "$archdir" || exit 1
+
 export CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}"
+
 CONFIG_OPTS="--prefix=/usr"
+
 ln -s ../configure .
 %configure $CONFIG_OPTS
 rm -f configure
+
 make
 
 %install
 archdir="`./config.guess`"
 cd "$archdir" || exit 1
 
-rm -rf   ${RPM_BUILD_ROOT}
-mkdir -p ${RPM_BUILD_ROOT}/etc/pam.d
-mkdir -p ${RPM_BUILD_ROOT}/usr/lib/systemd/user
+rm -rf   "$RPM_BUILD_ROOT"
+mkdir -p "$RPM_BUILD_ROOT/etc/pam.d"
+mkdir -p "$RPM_BUILD_ROOT/usr/lib/systemd/user"
 
-make DESTDIR=${RPM_BUILD_ROOT} \
+make DESTDIR="$RPM_BUILD_ROOT" \
      UPDATE_ICON_CACHE=true \
      SUID_FLAGS= \
      install
 
 dd=%{_builddir}/%{name}-%{version}
 
-( cd ${RPM_BUILD_ROOT} || exit 1
+( cd "$RPM_BUILD_ROOT" || exit 1
   find * -type f -o -type l |
   grep -vF '/.' |
   sed 's@^@/@'  |
@@ -136,10 +155,13 @@ dd=%{_builddir}/%{name}-%{version}
 #%find_lang %{name}
 #cat %{name}.lang >> $dd/allfiles.txt
 
-chmod -R a+r,u+w,og-w ${RPM_BUILD_ROOT}
+chmod -R a+r,u+w,og-w "$RPM_BUILD_ROOT"
 
 %clean
-rm -rf ${RPM_BUILD_ROOT}
+rm -rf "$RPM_BUILD_ROOT"
+
+%files -f allfiles.txt
+%defattr(-, root, root)
 
 %post
 killall -HUP xscreensaver 2>&-
@@ -159,13 +181,13 @@ for f in /usr/share/icons/index.theme     \
 done
 
 %preun
-killall -q xscreensaver          || true
-killall -q xscreensaver-settings || true
-killall -q xscreensaver-command  || true
+# 0 = removing, 1 = upgrading.
+if [ "$1" = 0 ] ; then
+  killall -q /usr/bin/xscreensaver          || true
+  killall -q /usr/bin/xscreensaver-settings || true
+  killall -q /usr/bin/xscreensaver-command  || true
+fi
 exit 0
-
-%files -f allfiles.txt
-%defattr(-, root, root)
 
 %changelog
 * Tue Dec 02 2025 jwz
