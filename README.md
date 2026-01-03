@@ -3,7 +3,6 @@
 ## Table of Contents <!-- omit in toc -->
 - [Description](#description)
 - [Quick Start Guide](#quick-start-guide)
-- [Wayland Support](#wayland-support-for-xscreensaver)
 - [Configuring XScreensaver and Obtaining Older Versions](#configuring-xscreensaver-and-obtaining-older-versions)
 - [Netware SMP Screensaver Options](#netwaresmp-options)
 - [Command Line Options](#command-line-options)
@@ -23,11 +22,11 @@ The _netwaresmp_ screensaver written by Jeffrey Merkey &lt;jeffmerkey@gmail.com&
 You can download precompiled Red Hat Package Manager (RPM) and Debian (DEB) packages which contain the entire XScreensaver 
 program with netwaresmp integrated from the [release page](https://github.com/jeffmerkey/netware-xscreensaver/releases) for 
 this project, or you can build the program from the git sources.  The current netwaresmp xscreensaver module is compiled 
-against the XScreensaver v6.10.1-0 base and you may have to deinstall any older version of the Xscreensaver program you are 
+against the XScreensaver v6.13-0 base and you may have to deinstall any older version of the Xscreensaver program you are 
 running and then reinstall with the RPM or DEB packages listed in the releases section.  
 
 Most Linux distributions use an outdated xscreensaver program which lacks current bug fixes and new capabilities.    
-It's a good idea to upgrade to the xscreensaver 6.10.1 release since there have been many bug fixes and enhanced features in 
+It's a good idea to upgrade to the xscreensaver 6.13 release since there have been many bug fixes and enhanced features in 
 the most current maintained version of XScreensaver. 
 
 If you want to build the program from scratch with the git sources rather than use the pre-compiled RPMS and DEB packages, then please skip to the section [Building the Screensaver from Source](#building-the-screensaver-from-source) for instructions on how to do this. 
@@ -39,17 +38,17 @@ binary installation and Source RPM packages (SRPMS) and Debbuild SDEB packages f
 RPM and DEB packages for each release include a binary architecture specific package
 and a source package which can be downloaded and built/rebuilt and which contains the source code.
 
-For example, the release v6.10.1-0 contains the following packages in the release section:
+For example, the release v6.13-0 contains the following packages in the release section:
 
 ### **RPM Based Packages (RedHat, CentOS, SuSe)**
 
-- [xscreensaver-6.10.1-0.src.rpm](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.10.1-0/xscreensaver-6.10.1-0.src.rpm)
-- [xscreensaver-6.10.1-0.x86_64.rpm](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.10.1-0/xscreensaver-6.10.1-0.x86_64.rpm)
+- [xscreensaver-6.13-0.src.rpm](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.13-0/xscreensaver-6.13-0.src.rpm)
+- [xscreensaver-6.13-0.x86_64.rpm](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.13-0/xscreensaver-6.13-0.x86_64.rpm)
 
 ### **Debian Based Packages (Debian, Ubuntu)**
 
-- [xscreensaver-6.10.1-0.sdeb](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.10.1-0/xscreensaver-6.10.1-0.sdeb)
-- [xscreensaver_6.10.1-0_amd64.deb](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.10.1-0/xscreensaver_6.10.1-0_amd64.deb)
+- [xscreensaver-6.13-0.sdeb](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.13-0/xscreensaver-6.13-0.sdeb)
+- [xscreensaver_6.13-0_amd64.deb](https://github.com/jeffmerkey/netware-xscreensaver/releases/download/v6.13-0/xscreensaver_6.13-0_amd64.deb)
 
 ### **Removing a Previous Installation of Outdated Versions of XScreensaver**
 
@@ -87,7 +86,7 @@ apt-get autoremove xscreensaver
 
 To install the binary package with the RPM package manager:
 ```sh
-rpm -i xscreensaver-6.10.1-0.x86_64.rpm
+rpm -i xscreensaver-6.13-0.x86_64.rpm
 ```
 
 To deinstall the RPM binary package:
@@ -97,7 +96,7 @@ rpm -e xscreensaver
 
 To install the binary package with the Debian dpkg package manager for amd64:
 ```sh
-dpkg -i xscreensaver_6.10.1-0_amd64.deb
+dpkg -i xscreensaver_6.13-0_amd64.deb
 ```
 
 To deinstall the Debian dpkg binary package:
@@ -109,7 +108,7 @@ dpkg -r xscreensaver
 
 To install the source package with the RPM package manager:
 ```sh
-rpm -i xscreensaver-6.10.1-0.src.rpm
+rpm -i xscreensaver-6.13-0.src.rpm
 ```
 
 *(Note: rpm installs the source code files in /root/rpmbuild/ as top directory for RedHat and CentOS
@@ -117,7 +116,7 @@ platforms.  SuSe platforms install the source code files in /usr/src/packages/)*
 
 To install the source package with the Debbuild package tool:
 ```sh
-debbuild -i xscreensaver-6.10.1-0.sdeb
+debbuild -i xscreensaver-6.13-0.sdeb
 ```
 *(Note: Debbuild installs the source code files in /root/debbuild/ as top directory)*
 
@@ -131,7 +130,7 @@ For building or rebuilding RPMS or DEB Packages after you have installed the ass
 Red Hat uses an epoch designator (num:package version) in the rpm filename for it's versions of 
 xscreensaver, i.e. "xscreensaver-1:5.45" where "1:" is an override epoch number which will override
 later versions of the software.  Red Hat does this to force overwrite of later installs of the 
-xscreensaver program.  By way of example, if you install xscreensaver-6.10.1 on your system, when
+xscreensaver program.  By way of example, if you install xscreensaver-6.13 on your system, when
 dnf runs an update, it will downgrade the xscreensaver to v5.45 since it contains an epoch number
 in the filename.  Renaming your file and inserting your own higher epoch (i.e. 2:package version) 
 may not always work in all instances, and the use of epoch numbers is a bad practice to promote.
@@ -177,12 +176,6 @@ fastestmirror=true
 
 Save your changes (:w) and when you run dnf, it will ignore updates of xscreensaver from 
 Red Hat's old, outdated xscreensaver versions.  
-
-## **Wayland Support for XScreensaver**
-
-Experimental Wayland support using the Wayland ext-idle-notify-v1 protocol with the [swayidle](https://github.com/swaywm/swayidle) client is under development and testing.  You must have installed a wayland compositor that supports this ext-idle-notify-v1/2 protocol.  Almost all of the wayland compositors support this protocol.  Under wayland, in most cases the xscreensaver daemon is no longer required, and you can directly configure the [swayidle](https://github.com/swaywm/swayidle) and [swaylock](https://github.com/swaywm/swaylock) wayland utilities to invoke xscreensaver-Gtk directly to launch a configured xscreensaver session under wayland.  Please be advised, wayland adoption is still in process on most linux distros, so there are some of the older wayland compositors which do not fully support the idle protocols under wayland.  This repository has a Wayland branch for anyone wanting to test xscreensaver over wayland using swayidle.  
-
-See [https://github.com/jeffmerkey/xscreensaver-6.10/tree/wayland](https://github.com/jeffmerkey/xscreensaver-6.10/tree/wayland)
 
 ## **Configuring XScreensaver and Obtaining Older Versions**
 
@@ -248,26 +241,26 @@ _netwaresmp_ accepts the following options:
 
 It should be noted that since the xscreensaver-netwaresmp code base is provided as a Source RPM and DEB packages, it's very simple and straight forward to rebuild the RPM or DEB packages without needing to resort to a manual rebuild.  However, users on ARM64 systems and Debian users may need to build the program manually.  You are encouraged to use the RPM method to rebuild the code but in the event you need to do so manually, the following section describes the steps for accomplishing this. 
 
-In order to build the xscreensaver with netwaresmp fully integrated, you should first clone the xscreensaver-6.10 repository.  This repository is a generic xscreensaver-6.10.1 code base with the X11 netwaresmp screensaver included as a patch series.  This approach is implemented with a patch series in this manner for two reasons.  First, it is necessary to re-run the autoreconf automake program after downloading the sources and applying the patch series in order to integrate the netwaresmp screensaver into the xscreensaver-settings configuration tool.  The build for xscreensaver-settings setup utility uses a static file to list integrated screensavers and this file is only updated by running autoreconf against the code base.  Second, this approach allows the netwaresmp patch series to be applied to previous versions of xscreensaver package prior to the 6.10.1 release.  
+In order to build the xscreensaver with netwaresmp fully integrated, you should first clone the xscreensaver-6.13 repository.  This repository is a generic xscreensaver-6.13 code base with the X11 netwaresmp screensaver included as a patch series.  This approach is implemented with a patch series in this manner for two reasons.  First, it is necessary to re-run the autoreconf automake program after downloading the sources and applying the patch series in order to integrate the netwaresmp screensaver into the xscreensaver-settings configuration tool.  The build for xscreensaver-settings setup utility uses a static file to list integrated screensavers and this file is only updated by running autoreconf against the code base.  Second, this approach allows the netwaresmp patch series to be applied to previous versions of xscreensaver package prior to the 6.13 release.  
 
-Most Linux distributions use an outdated xscreensaver program which lacks current bug fixes and new capabilities.  It should be noted that there are subtle programming differences between many of these earlier versions.  I have not fully tested the Netware SMP screensaver on all of these earlier distributions, however, in most cases the existing netwaresmp patch series should work on most of them.  If you have problems trying to apply the patch series to an xscreensaver release, please feel free to post an Issue to [Issues](#issues--problems--help) and I will look into it and get back to you and provide an updated patch for that xscreensaver distribution.  It's actually a lot better if you just choose to upgrade to the xscreensaver 6.10 release since there have been many bug fixes and enhanced features in the newer code base.  It's also a lot less complicated since the newer release is a single RPM for the entire xscreensaver distribution, instead of xscreensaver being provided as dozens of packages for each xscreensaver distro such as RedHat provides, which is difficult for end users to a manage and navigate. 
+Most Linux distributions use an outdated xscreensaver program which lacks current bug fixes and new capabilities.  It should be noted that there are subtle programming differences between many of these earlier versions.  I have not fully tested the Netware SMP screensaver on all of these earlier distributions, however, in most cases the existing netwaresmp patch series should work on most of them.  If you have problems trying to apply the patch series to an xscreensaver release, please feel free to post an Issue to [Issues](#issues--problems--help) and I will look into it and get back to you and provide an updated patch for that xscreensaver distribution.  It's actually a lot better if you just choose to upgrade to the xscreensaver 6.13 release since there have been many bug fixes and enhanced features in the newer code base.  It's also a lot less complicated since the newer release is a single RPM for the entire xscreensaver distribution, instead of xscreensaver being provided as dozens of packages for each xscreensaver distro such as RedHat provides, which is difficult for end users to a manage and navigate. 
 
-### Installing the xscreensaver-6.10.1 Code Base
+### Installing the xscreensaver-6.13 Code Base
 
-You can clone the screensaver-6.10 code base from github as follows using
-the 'git clone' command, or you can download the xscreensaver-6.10.1-0.tar.gz
+You can clone the screensaver-6.13 code base from github as follows using
+the 'git clone' command, or you can download the xscreensaver-6.13-0.tar.gz
 archive directly from github, then untar and extract the files.
 
 #### Cloning from Github
   
 ```sh
-git clone https://github.com/jeffmerkey/xscreensaver-6.10
+git clone https://github.com/jeffmerkey/xscreensaver-6.13
 ```
 
 After running the 'git clone' command, you should see something similiar to:
 
 ```sh
-Cloning into xscreensaver-6.10 ...
+Cloning into xscreensaver-6.13 ...
 remote: Enumerating objects: 2199, done.
 remote: Counting objects: 100% (2199/2199), done.
 remote: Compressing objects: 100% (1366/1366), done.
@@ -278,15 +271,15 @@ Resolving deltas: 100% (796/796), done.
 
 #### Downloading 
 
-You can also download the xscreensaver-6.10.1-0.tar.gz archive directly
-from github from the releases section for the xscreensaver-6.10 code base:
+You can also download the xscreensaver-6.13-0.tar.gz archive directly
+from github from the releases section for the xscreensaver-6.13 code base:
 
-- [xscreensaver-6.10.1-0.tar.gz](https://github.com/jeffmerkey/xscreensaver-6.10/archive/refs/tags/v6.10.1-0.tar.gz) 
+- [xscreensaver-6.13-0.tar.gz](https://github.com/jeffmerkey/xscreensaver-6.13/archive/refs/tags/v6.13-0.tar.gz) 
 
 After you download the code base, untar the package into a directory:
 
 ```sh
-tar -xf xscreensaver-6.10.1-0.tar.gz 
+tar -xf xscreensaver-6.13-0.tar.gz 
 ```
 
 The tar program should extract the files into the following directory.  Use ls -ld 
@@ -294,8 +287,8 @@ to list the directory and archive to verify it was untarred correctly:
 
 ```sh
 [root@localhost Downloads]# ls -ld xscreensaver-\*
-drwxrwxr-x. 9 root    root        4096 Feb 18 22:25 xscreensaver-6.10.1-0
--rw-rw-r--. 1 jmerkey jmerkey 20024886 Feb 20 20:56 xscreensaver-6.10.1-0.tar.gz
+drwxrwxr-x. 9 root    root        4096 Feb 18 22:25 xscreensaver-6.13-0
+-rw-rw-r--. 1 jmerkey jmerkey 20024886 Feb 20 20:56 xscreensaver-6.13-0.tar.gz
 ```
 
 #### Applying the patch and running autoreconf
@@ -306,20 +299,20 @@ base manually, you must apply the patch series then run autoreconf. Change direc
 If you cloned the repository:
 
 ```sh
-[root@localhost]# cd xscreensaver-6.10
-[root@localhost xscreensaver-6.10]# 
+[root@localhost]# cd xscreensaver-6.13
+[root@localhost xscreensaver-6.13]# 
 ```
 
 If you have downloaded and untarred the repository with the tar -xf command manually:
 
 ```sh
-[root@localhost]# cd xscreensaver-6.10.1-0
-[root@localhost xscreensaver-6.10.1-0]# 
+[root@localhost]# cd xscreensaver-6.13-0
+[root@localhost xscreensaver-6.13-0]# 
 ```
-The patch is named netwaresmp-xscreensaver-6.10.patch.  You should see a file listing similiar 
+The patch is named netwaresmp-xscreensaver-6.13.patch.  You should see a file listing similiar 
 to the following in the base source code directory:
 ```sh
-[root@localhost xscreensaver-6.10]# ll
+[root@localhost xscreensaver-6.13]# ll
 total 1396
 -rw-r--r--. 1 root root 137286 Feb 20 20:33 aclocal.m4
 drwxr-xr-x. 4 root root    175 Feb 20 20:33 android
@@ -340,42 +333,42 @@ drwxr-xr-x. 6 root root  12288 Feb 20 20:33 hacks
 -rwxr-xr-x. 1 root root  15635 Feb 20 20:33 intltool-update.in
 drwxr-xr-x. 2 root root   4096 Feb 20 20:33 jwxyz
 -rw-r--r--. 1 root root  15344 Feb 20 20:33 Makefile.in
--rw-r--r--. 1 root root  42160 Feb 20 20:33 netwaresmp-xscreensaver-6.10.patch
+-rw-r--r--. 1 root root  42160 Feb 20 20:33 netwaresmp-xscreensaver-6.13.patch
 drwxr-xr-x. 9 root root   4096 Feb 20 20:33 OSX
 drwxr-xr-x. 2 root root   4096 Feb 20 20:33 po
 -rw-r--r--. 1 root root  82109 Feb 20 20:33 README
 -rw-r--r--. 1 root root  11156 Feb 20 20:33 README.hacking
 -rw-r--r--. 1 root root   8694 Feb 20 20:33 README.md
 drwxr-xr-x. 3 root root   4096 Feb 20 20:33 utils
--rw-r--r--. 1 root root   4147 Feb 20 20:33 xscreensaver-6.10.spec
+-rw-r--r--. 1 root root   4147 Feb 20 20:33 xscreensaver-6.13.spec
 -rw-r--r--. 1 root root   3426 Feb 20 20:33 xscreensaver.spec
-[root@localhost xscreensaver-6.10]# 
+[root@localhost xscreensaver-6.13]# 
 ```
 
 Apply the patch with the following command:
 ```sh
-[root@localhost xscreensaver-6.10]# patch -p1 < netwaresmp-xscreensaver-6.10.patch 
+[root@localhost xscreensaver-6.13]# patch -p1 < netwaresmp-xscreensaver-6.13.patch 
 ```
 The patching process should produce the following output:
 
 ```sh
-[root@localhost xscreensaver-6.10]# patch -p1 < netwaresmp-xscreensaver-6.10.patch
+[root@localhost xscreensaver-6.13]# patch -p1 < netwaresmp-xscreensaver-6.13.patch
 patching file driver/XScreenSaver.ad.in
 patching file hacks/config/netwaresmp.xml
 patching file hacks/Makefile.in
 patching file hacks/netwaresmp.c
 patching file hacks/netwaresmp.man
 patching file xscreensaver.spec
-[root@localhost xscreensaver-6.10]#
+[root@localhost xscreensaver-6.13]#
 ```
 
-If you see a printout indicating the patch was successfully applied, then you can now run autoreconf program and start the build.   You can apply this patch in a similiar manner to most of the xscreensaver code bases prior to 6.10.1 and it will work on most of the distros.  If you run into trouble, post an Issues report on github at [Issues / Problems / Help](#issues--problems--help)
+If you see a printout indicating the patch was successfully applied, then you can now run autoreconf program and start the build.   You can apply this patch in a similiar manner to most of the xscreensaver code bases prior to 6.13 and it will work on most of the distros.  If you run into trouble, post an Issues report on github at [Issues / Problems / Help](#issues--problems--help)
 .
 
 Now run autoreconf to re-create the Makefiles and Configuration scripts:
 
 ```sh
-[root@localhost xscreensaver-6.10]# autoreconf -f -v 
+[root@localhost xscreensaver-6.13]# autoreconf -f -v 
 ```
 
 You should see the followning output if autoreconf completed successfully:
@@ -391,12 +384,12 @@ autoreconf: running: /usr/bin/autoconf --force
 autoreconf: running: /usr/bin/autoheader --force
 autoreconf: configure.ac: not using Automake
 autoreconf: Leaving directory `.
-[root@localhost xscreensaver-6.10]# 
+[root@localhost xscreensaver-6.13]# 
 ```
-Now type 'configure' and then type 'make' to build the  xscreensaver-netwaresmp-6.10.1 package.  If the make process succeeds, then perform 'make install' to install the xscreensaver package to your system:
+Now type 'configure' and then type 'make' to build the  xscreensaver-netwaresmp-6.13 package.  If the make process succeeds, then perform 'make install' to install the xscreensaver package to your system:
 
 ```sh
-[root@localhost xscreensaver-6.10]# ./configure; 
+[root@localhost xscreensaver-6.13]# ./configure; 
 ```
 
 Check to make certain the ./configure script completes with no errors.   If there were no 
@@ -404,7 +397,7 @@ errors the ./configure program returns a final listing of created Makefiles and 
 at the very end of the configure script similiar to the following:
 
 ```sh
-current directory: /work/xscreensaver-6.10
+current directory: /work/xscreensaver-6.13
 command line was: ./configure
 ...
 ... <snip>
@@ -443,13 +436,13 @@ Now type make from the base directory to make and compile the xscreensaver-netwa
 package.  
 
 ```sh
-[root@localhost xscreensaver-6.10]# make
+[root@localhost xscreensaver-6.13]# make
 ```
 If make succeeds without any errors, you can install the newly built packages on your 
 system with 'make install'.
 
 ```sh
-[root@localhost xscreensaver-6.10]# make install
+[root@localhost xscreensaver-6.13]# make install
 ```
 
 ## **Building as an RPM Package**
@@ -477,7 +470,7 @@ to build the rpm package.
 To build the XScreensaver using the rpm tool, change directories (cd) into the /root/rpmbuild/SPECS/ directory (/usr/src/packages/SPECS/ for SuSe) and enter the following command:
 
 ```sh
-rpmbuild -ba xscreensaver-6.10.spec <enter>
+rpmbuild -ba xscreensaver-6.13.spec <enter>
 ```
 
 ## **Building as a Debian Package**
@@ -500,7 +493,7 @@ DEB package.
 
 To build the XScreensaver using debbuild, change directories (cd) into the /root/debbuild/SPECS/ directory and enter the following command:
 ```sh
-debbuild -vv -ba xscreensaver-6.10.spec <enter>
+debbuild -vv -ba xscreensaver-6.13.spec <enter>
 ```
 ## **Copyright**
 
