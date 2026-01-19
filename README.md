@@ -358,7 +358,7 @@ patching file hacks/Makefile.in
 patching file hacks/netwaresmp.c
 patching file hacks/netwaresmp.man
 patching file xscreensaver.spec
-[root@localhost xscreensaver-6]#
+[root@localhost xscreensaver]#
 ```
 
 If you see a printout indicating the patch was successfully applied, then you can now run autoreconf program and start the build.   You can apply this patch in a similiar manner to most of the xscreensaver code bases prior to 6.14 and it will work on most of the distros.  If you run into trouble, post an Issues report on github at [Issues / Problems / Help](#issues--problems--help)
@@ -385,7 +385,7 @@ autoreconf: configure.ac: not using Automake
 autoreconf: Leaving directory `.
 [root@localhost xscreensaver]# 
 ```
-Now type 'configure' and then type 'make' to build the  xscreensaver-netwaresmp-6.14 package.  If the make process succeeds, then perform 'make install' to install the xscreensaver package to your system:
+Now type 'configure' and then type 'make' to build the  xscreensaver-6.14 package.  If the make process succeeds, then perform 'make install' to install the xscreensaver package to your system:
 
 ```sh
 [root@localhost xscreensaver]# ./configure; 
