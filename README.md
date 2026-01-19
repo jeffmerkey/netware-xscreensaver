@@ -274,12 +274,12 @@ Resolving deltas: 100% (796/796), done.
 You can also download the xscreensaver-6.14-0.tar.gz archive directly
 from github from the releases section for the xscreensaver-6.14 code base:
 
-- [xscreensaver-6.14-0.tar.gz](https://github.com/xscreensaver/xscreensaver/archive/refs/tags/v6.14-0.tar.gz) 
+- [xscreensaver-6.14.tar.gz](https://github.com/xscreensaver/xscreensaver/archive/refs/tags/v6.14.tar.gz) 
 
 After you download the code base, untar the package into a directory:
 
 ```sh
-tar -xf xscreensaver-6.14-0.tar.gz 
+tar -xf xscreensaver-6.14.tar.gz 
 ```
 
 The tar program should extract the files into the following directory.  Use ls -ld 
@@ -287,8 +287,8 @@ to list the directory and archive to verify it was untarred correctly:
 
 ```sh
 [root@localhost Downloads]# ls -ld xscreensaver-\*
-drwxrwxr-x. 9 root    root        4096 Feb 18 22:25 xscreensaver-6.14-0
--rw-rw-r--. 1 jmerkey jmerkey 20024886 Feb 20 20:56 xscreensaver-6.14-0.tar.gz
+drwxrwxr-x. 9 root    root        4096 Feb 18 22:25 xscreensaver-6.14
+-rw-rw-r--. 1 jmerkey jmerkey 20024886 Feb 20 20:56 xscreensaver-6.14.tar.gz
 ```
 
 #### Applying the patch and running autoreconf
