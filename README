@@ -1,6 +1,21 @@
 
 
-NOVELL NETWARE SMP CONSOLE SCREENSAVER FOR X11, GNOME, AND KDE DESKTOPS
+NOVELL NETWARE SMP CONSOLE SCREENSAVER FOR X11, GNOME, KDE PLASMA, AND WAYLAND DESKTOPS
+
+
+RPM and DEB Package Downloads
+
+RPM BASED PACKAGES (REDHAT, CENTOS, FEDORA, SUSE, ALMA, ROCKY)
+
+-   xscreensaver-6.14-0.src.rpm RPM Source
+-   xscreensaver-6.14-0.x86_64.rpm RPM Binary
+-   xscreensaver-debuginfo-6.14-0.x86_64.rpm RPM Debug Info
+-   xscreensaver-debugsource-6.14-0.x86_64.rpm RPM Debug Source
+
+DEBIAN BASED PACKAGES (DEBIAN, UBUNTU)
+
+-   xscreensaver-6.14-0.sdeb Debian Source
+-   xscreensaver_6.14-0_amd64.deb Debian Binary
 
 
 Table of Contents 
