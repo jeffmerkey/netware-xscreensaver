@@ -247,7 +247,7 @@ Most Linux distributions use an outdated xscreensaver program which lacks curren
 
 ### Installing the xscreensaver Code Base
 
-You can clone the xscreensaver-6.14 code base from github as follows using
+You can clone the xscreensaver code base from github as follows using
 the 'git clone' command, or you can download the xscreensaver-6.14-0.tar.gz
 archive directly from github, then untar and extract the files.
 
