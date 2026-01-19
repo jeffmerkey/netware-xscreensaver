@@ -306,10 +306,10 @@ If you cloned the repository:
 If you have downloaded and untarred the repository with the tar -xf command manually:
 
 ```sh
-[root@localhost]# cd xscreensaver-6.14-0
-[root@localhost xscreensaver-6.14-0]# 
+[root@localhost]# cd xscreensaver-6.14
+[root@localhost xscreensaver-6.14]# 
 ```
-The patch is named netwaresmp-xscreensaver-6.14.patch.  You should see a file listing similiar 
+The patch is named patch/netwaresmp-xscreensaver-6.14.patch.  You should see a file listing similiar 
 to the following in the base source code directory:
 ```sh
 [root@localhost xscreensaver]# ll
