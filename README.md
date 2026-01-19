@@ -245,22 +245,22 @@ In order to build the xscreensaver with netwaresmp fully integrated, you should 
 
 Most Linux distributions use an outdated xscreensaver program which lacks current bug fixes and new capabilities.  It should be noted that there are subtle programming differences between many of these earlier versions.  I have not fully tested the Netware SMP screensaver on all of these earlier distributions, however, in most cases the existing netwaresmp patch series should work on most of them.  If you have problems trying to apply the patch series to an xscreensaver release, please feel free to post an Issue to [Issues](#issues--problems--help) and I will look into it and get back to you and provide an updated patch for that xscreensaver distribution.  It's actually a lot better if you just choose to upgrade to the xscreensaver 6.14 release since there have been many bug fixes and enhanced features in the newer code base.  It's also a lot less complicated since the newer release is a single RPM for the entire xscreensaver distribution, instead of xscreensaver being provided as dozens of packages for each xscreensaver distro such as RedHat provides, which is difficult for end users to a manage and navigate. 
 
-### Installing the xscreensaver-6.14 Code Base
+### Installing the xscreensaver Code Base
 
-You can clone the screensaver-6.14 code base from github as follows using
+You can clone the xscreensaver-6.14 code base from github as follows using
 the 'git clone' command, or you can download the xscreensaver-6.14-0.tar.gz
 archive directly from github, then untar and extract the files.
 
 #### Cloning from Github
   
 ```sh
-git clone https://github.com/jeffmerkey/xscreensaver-6.14
+git clone https://github.com/xscreensaver/xscreensaver
 ```
 
 After running the 'git clone' command, you should see something similiar to:
 
 ```sh
-Cloning into xscreensaver-6.14 ...
+Cloning into xscreensaver ...
 remote: Enumerating objects: 2199, done.
 remote: Counting objects: 100% (2199/2199), done.
 remote: Compressing objects: 100% (1366.1466), done.
@@ -274,7 +274,7 @@ Resolving deltas: 100% (796/796), done.
 You can also download the xscreensaver-6.14-0.tar.gz archive directly
 from github from the releases section for the xscreensaver-6.14 code base:
 
-- [xscreensaver-6.14-0.tar.gz](https://github.com/jeffmerkey/xscreensaver-6.14/archive/refs/tags/v6.14-0.tar.gz) 
+- [xscreensaver-6.14-0.tar.gz](https://github.com/xscreensaver/xscreensaver/archive/refs/tags/v6.14-0.tar.gz) 
 
 After you download the code base, untar the package into a directory:
 
@@ -299,8 +299,8 @@ base manually, you must apply the patch series then run autoreconf. Change direc
 If you cloned the repository:
 
 ```sh
-[root@localhost]# cd xscreensaver-6.14
-[root@localhost xscreensaver-6.14]# 
+[root@localhost]# cd xscreensaver
+[root@localhost xscreensaver]# 
 ```
 
 If you have downloaded and untarred the repository with the tar -xf command manually:
@@ -312,7 +312,7 @@ If you have downloaded and untarred the repository with the tar -xf command manu
 The patch is named netwaresmp-xscreensaver-6.14.patch.  You should see a file listing similiar 
 to the following in the base source code directory:
 ```sh
-[root@localhost xscreensaver-6.14]# ll
+[root@localhost xscreensaver]# ll
 total 1396
 -rw-r--r--. 1 root root 137286 Feb 20 20:33 aclocal.m4
 drwxr-xr-x. 4 root root    175 Feb 20 20:33 android
@@ -333,33 +333,32 @@ drwxr-xr-x. 6 root root  12288 Feb 20 20:33 hacks
 -rwxr-xr-x. 1 root root  15635 Feb 20 20:33 intltool-update.in
 drwxr-xr-x. 2 root root   4096 Feb 20 20:33 jwxyz
 -rw-r--r--. 1 root root  15344 Feb 20 20:33 Makefile.in
--rw-r--r--. 1 root root  42160 Feb 20 20:33 netwaresmp-xscreensaver-6.14.patch
 drwxr-xr-x. 9 root root   4096 Feb 20 20:33 OSX
+drwxr-xr-x. 2 root root   4096 Feb 20 20:33 patch
 drwxr-xr-x. 2 root root   4096 Feb 20 20:33 po
 -rw-r--r--. 1 root root  82109 Feb 20 20:33 README
 -rw-r--r--. 1 root root  11156 Feb 20 20:33 README.hacking
 -rw-r--r--. 1 root root   8694 Feb 20 20:33 README.md
 drwxr-xr-x. 3 root root   4096 Feb 20 20:33 utils
--rw-r--r--. 1 root root   4147 Feb 20 20:33 xscreensaver-6.14.spec
 -rw-r--r--. 1 root root   3426 Feb 20 20:33 xscreensaver.spec
-[root@localhost xscreensaver-6.14]# 
+[root@localhost xscreensaver]# 
 ```
 
 Apply the patch with the following command:
 ```sh
-[root@localhost xscreensaver-6.14]# patch -p1 < netwaresmp-xscreensaver-6.14.patch 
+[root@localhost xscreensaver]# patch -p1 < patch/netwaresmp-xscreensaver-6.14.patch 
 ```
 The patching process should produce the following output:
 
 ```sh
-[root@localhost xscreensaver-6.14]# patch -p1 < netwaresmp-xscreensaver-6.14.patch
+[root@localhost xscreensaver]# patch -p1 < patch/netwaresmp-xscreensaver-6.14.patch
 patching file driver/XScreenSaver.ad.in
 patching file hacks/config/netwaresmp.xml
 patching file hacks/Makefile.in
 patching file hacks/netwaresmp.c
 patching file hacks/netwaresmp.man
 patching file xscreensaver.spec
-[root@localhost xscreensaver-6.14]#
+[root@localhost xscreensaver-6]#
 ```
 
 If you see a printout indicating the patch was successfully applied, then you can now run autoreconf program and start the build.   You can apply this patch in a similiar manner to most of the xscreensaver code bases prior to 6.14 and it will work on most of the distros.  If you run into trouble, post an Issues report on github at [Issues / Problems / Help](#issues--problems--help)
@@ -368,7 +367,7 @@ If you see a printout indicating the patch was successfully applied, then you ca
 Now run autoreconf to re-create the Makefiles and Configuration scripts:
 
 ```sh
-[root@localhost xscreensaver-6.14]# autoreconf -f -v 
+[root@localhost xscreensaver]# autoreconf -f -v 
 ```
 
 You should see the followning output if autoreconf completed successfully:
@@ -384,12 +383,12 @@ autoreconf: running: /usr/bin/autoconf --force
 autoreconf: running: /usr/bin/autoheader --force
 autoreconf: configure.ac: not using Automake
 autoreconf: Leaving directory `.
-[root@localhost xscreensaver-6.14]# 
+[root@localhost xscreensaver]# 
 ```
 Now type 'configure' and then type 'make' to build the  xscreensaver-netwaresmp-6.14 package.  If the make process succeeds, then perform 'make install' to install the xscreensaver package to your system:
 
 ```sh
-[root@localhost xscreensaver-6.14]# ./configure; 
+[root@localhost xscreensaver]# ./configure; 
 ```
 
 Check to make certain the ./configure script completes with no errors.   If there were no 
@@ -397,7 +396,7 @@ errors the ./configure program returns a final listing of created Makefiles and 
 at the very end of the configure script similiar to the following:
 
 ```sh
-current directory: /work/xscreensaver-6.14
+current directory: /work/xscreensaver
 command line was: ./configure
 ...
 ... <snip>
@@ -436,13 +435,13 @@ Now type make from the base directory to make and compile the xscreensaver-netwa
 package.  
 
 ```sh
-[root@localhost xscreensaver-6.14]# make
+[root@localhost xscreensaver]# make
 ```
 If make succeeds without any errors, you can install the newly built packages on your 
 system with 'make install'.
 
 ```sh
-[root@localhost xscreensaver-6.14]# make install
+[root@localhost xscreensaver]# make install
 ```
 
 ## **Building as an RPM Package**
