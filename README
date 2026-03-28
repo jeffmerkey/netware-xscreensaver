@@ -29,6 +29,7 @@ Table of Contents
 -   Quick Start Guide
 -   Help! “dnf update -y” overwrites and downgrades my xscreensaver
     version
+-   Running the MPV Media Player with xscreensaver
 -   Configuring XScreensaver and Obtaining Older Versions
 -   Netware SMP Screensaver Options
 -   Command Line Options
@@ -230,6 +231,9 @@ Your file should look like this after you add this entry:
 
 Save your changes (:w) and when you run dnf, it will ignore updates of
 xscreensaver from Red Hat’s old, outdated xscreensaver versions.
+
+
+RUNNING THE MPV MEDIA PLAYER WITH XSCREENSAVER
 
 
 CONFIGURING XSCREENSAVER AND OBTAINING OLDER VERSIONS
