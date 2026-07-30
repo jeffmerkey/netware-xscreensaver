@@ -96,7 +96,8 @@ More than 270 display modes are included in this package.
 # %patch<#> is deprecated as of RHEL 10, use %patch -P <#> instead.
 %patch -P 1 -p1 
 
-autoreconf -v -f -I /usr/share/gettext/m4
+#autoreconf -v -f -I /usr/share/gettext/m4
+autoreconf -v -f 
 
 if [ -x %{_datadir}/libtool/config.guess ]; then
   # use system-wide copy
